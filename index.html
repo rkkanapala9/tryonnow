@@ -1,121 +1,150 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TryOnNow - Ultimate AI Virtual Try-On</title>
-  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Montserrat:wght@700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TryOnNow – Ultimate AI Virtual Try-On</title>
+  <meta name="description" content="AI-powered virtual try-on with unlimited trials, instant results, and easy sharing." />
+
+  <!-- Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Montserrat:wght@700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
   <style>
-    /* Global Styles */
-    * {margin:0; padding:0; box-sizing:border-box;}
-    body {font-family:'Lato', sans-serif; line-height:1.6; color:#333;}
-    a {text-decoration:none; color:inherit;}
-    img {max-width:100%; display:block;}
-
-    /* Navbar */
-    nav {display:flex; justify-content:space-between; align-items:center; padding:20px 50px; background:#0D3B66; color:white; position:sticky; top:0; z-index:1000;}
-    nav .logo {font-family:'Montserrat', sans-serif; font-size:28px; font-weight:700;}
-    nav ul {display:flex; list-style:none;}
-    nav ul li {margin-left:30px;}
-    nav ul li a {color:white; font-weight:600; transition:0.3s;}
-    nav ul li a:hover {color:#F95738;}
-    nav .menu-toggle {display:none; font-size:24px; cursor:pointer;}
-
-    /* Hero */
-    .hero {
-      height: 100vh;
-      background: url("hero-background.jpg") no-repeat center center/cover;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      color: white;
-      position: relative;
+    /* ----------- Base / Tokens ----------- */
+    :root{
+      --brand:#0D3B66;
+      --accent:#F95738;
+      --ink:#222;
+      --paper:#fff;
+      --nav-h:64px; /* visual height of the nav */
     }
-    .hero::before {
-      content: "";
-      position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.35);
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%}
+    body{font-family:'Lato',sans-serif;color:var(--ink);background:var(--paper);line-height:1.6}
+    a{text-decoration:none;color:inherit}
+    img{display:block;max-width:100%}
+    /* Ensure anchor jumps leave room under sticky nav */
+    section[id]{scroll-margin-top:calc(var(--nav-h) + 20px)}
+
+    /* ----------- Nav ----------- */
+    nav{
+      position:sticky; top:0; z-index:1000;
+      height:var(--nav-h);
+      background:var(--brand); color:#fff;
+      display:flex; align-items:center; justify-content:space-between;
+      padding:0 20px; box-shadow:0 4px 14px rgba(0,0,0,.15);
     }
-    .hero-content {
-      position: relative;
-      z-index: 1;
-      max-width: 800px;
-      padding: 20px;
+    .logo{font-family:'Montserrat',sans-serif;font-size:28px;font-weight:700}
+    #nav-menu{list-style:none;display:flex;gap:24px}
+    #nav-menu a{font-weight:700}
+    #nav-menu a:hover{color:var(--accent)}
+    .menu-toggle{display:none;color:#fff;font-size:22px;cursor:pointer;padding:8px 10px;border:1px solid rgba(255,255,255,.25);border-radius:10px}
+
+    /* ----------- Hero ----------- */
+    .hero{
+      position:relative;
+      min-height:calc(100vh - var(--nav-h)); /* full screen below nav */
+      display:flex; align-items:center; justify-content:center;
+      text-align:center; color:#fff; padding:32px 20px;
+      /* >>> If your image has a different name, change it below <<< */
+      background:url("hero-background.jpg?v=4") no-repeat center 18% / cover;
+      isolation:isolate; /* ensures overlay never bleeds into next sections */
     }
-    .hero h1 {
-      font-size: clamp(28px, 5vw, 56px);
-      font-family: 'Montserrat', sans-serif;
-      margin-bottom: 20px;
+    .hero::before{
+      content:""; position:absolute; inset:0; z-index:-1;
+      background:linear-gradient(to bottom, rgba(0,0,0,.5), rgba(0,0,0,.35));
     }
-    .hero p {
-      font-size: clamp(16px, 2vw, 22px);
-      margin-bottom: 30px;
+    .hero-content{max-width:960px; animation:fadeUp .7s ease-out both}
+    .hero h1{
+      font-family:'Montserrat',sans-serif; line-height:1.1;
+      font-size:clamp(34px,5.4vw,64px); margin-bottom:16px;
+      text-shadow:0 10px 28px rgba(0,0,0,.55);
     }
-    .hero .btn {
-      background: #F95738;
-      padding: 15px 30px;
-      border-radius: 5px;
-      font-weight: 700;
-      color: white;
-      border: none;
-      cursor: pointer;
-      transition: 0.3s;
+    .hero p{
+      font-size:clamp(17px,2.6vw,22px); margin-bottom:28px;
+      text-shadow:0 6px 20px rgba(0,0,0,.45);
     }
-    .hero .btn:hover {background:#ff5f2d;}
-
-    /* Sections */
-    section {padding:80px 50px;}
-    .section-title {text-align:center; font-family:'Montserrat', sans-serif; font-size:32px; margin-bottom:50px; color:#0D3B66;}
-
-    /* How It Works */
-    .how-it-works {display:flex; flex-wrap:wrap; justify-content:center; gap:30px;}
-    .step {background:#f5f5f5; padding:30px; border-radius:10px; width:300px; text-align:center; transition:0.3s; box-shadow:0 5px 15px rgba(0,0,0,0.1);}
-    .step:hover {transform:translateY(-10px);}
-    .step i {font-size:40px; color:#0D3B66; margin-bottom:20px;}
-    .step h3 {font-size:22px; margin-bottom:10px;}
-    .step p {font-size:16px; color:#555;}
-
-    /* Features */
-    .features {display:flex; flex-wrap:wrap; justify-content:center; gap:30px;}
-    .feature-card {background:#f5f5f5; padding:30px; border-radius:10px; width:280px; text-align:center; transition:0.3s; box-shadow:0 5px 15px rgba(0,0,0,0.1);}
-    .feature-card i {font-size:40px; color:#F95738; margin-bottom:20px;}
-    .feature-card h3 {font-size:20px; margin-bottom:10px;}
-    .feature-card p {color:#555;}
-
-    /* Testimonials */
-    .testimonials {background:#0D3B66; color:white; text-align:center; padding:80px 20px;}
-    .testimonial {max-width:500px; margin:0 auto 40px;}
-    .testimonial p {font-style:italic; margin-bottom:10px;}
-    .testimonial h4 {font-weight:700;}
-
-    /* CTA */
-    .cta {background:#F95738; color:white; text-align:center; padding:80px 20px;}
-    .cta h2 {font-size:36px; margin-bottom:20px;}
-    .cta .btn {background:white; color:#F95738; padding:15px 30px; font-weight:700; border:none; border-radius:5px; cursor:pointer; transition:0.3s;}
-    .cta .btn:hover {background:#ffd9c2;}
-
-    /* Footer */
-    footer {background:#333; color:white; text-align:center; padding:40px 20px;}
-    footer a {color:white; margin:0 10px; transition:0.3s;}
-    footer a:hover {color:#F95738;}
-
-    /* Responsive */
-    @media(max-width:768px){
-      nav ul {flex-direction:column; background:#0D3B66; position:absolute; top:70px; right:0; width:200px; display:none; padding:20px;}
-      nav ul li {margin:15px 0;}
-      nav .menu-toggle {display:block;}
-      .how-it-works, .features {flex-direction:column; align-items:center;}
+    .btn{
+      display:inline-block; background:var(--accent); color:#fff; font-weight:800; letter-spacing:.2px;
+      padding:14px 26px; border:none; border-radius:12px; cursor:pointer;
+      transition:transform .08s ease, box-shadow .2s ease, background .2s ease;
+      box-shadow:0 10px 24px rgba(249,87,56,.35);
     }
+    .btn:hover{background:#ff5f2d; transform:translateY(-1px)}
+
+    @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+
+    /* ----------- Generic Sections ----------- */
+    section{padding:72px 20px; position:relative; z-index:1; background:#fff}
+    .wrap{max-width:1100px; margin:0 auto}
+    .section-title{
+      text-align:center; color:var(--brand);
+      font-family:'Montserrat',sans-serif; font-size:32px; margin:0 0 36px;
+    }
+
+    /* ----------- How It Works ----------- */
+    .how-it-works{display:grid; grid-template-columns:repeat(3,minmax(220px,1fr)); gap:24px}
+    .step{
+      background:#f7f7f7; padding:28px; border-radius:14px; text-align:center;
+      box-shadow:0 6px 16px rgba(0,0,0,.08);
+    }
+    .step i{font-size:40px; color:var(--brand); margin-bottom:14px; display:block}
+    .step h3{font-size:20px; margin:8px 0}
+
+    /* ----------- Features ----------- */
+    .features{display:grid; grid-template-columns:repeat(4,minmax(200px,1fr)); gap:24px}
+    .feature-card{
+      background:#f7f7f7; padding:26px; border-radius:14px; text-align:center;
+      box-shadow:0 6px 16px rgba(0,0,0,.08);
+    }
+    .feature-card i{font-size:40px; color:var(--accent); margin-bottom:14px; display:block}
+    .feature-card h3{font-size:18px; margin:8px 0}
+
+    /* ----------- Testimonials ----------- */
+    .testimonials{background:var(--brand); color:#fff; text-align:center}
+    .testimonial{max-width:640px; margin:0 auto 28px}
+    .testimonial p{font-style:italic; margin:0 0 8px}
+
+    /* ----------- CTA ----------- */
+    .cta{background:var(--accent); color:#fff; text-align:center}
+    .cta h2{font-size:clamp(24px,5vw,36px); margin:0 0 18px}
+    .cta .btn{background:#fff; color:var(--accent); box-shadow:none}
+    .cta .btn:hover{background:#ffe7df}
+
+    /* ----------- Footer ----------- */
+    footer{background:#222; color:#fff; text-align:center; padding:42px 20px}
+    footer a{color:#fff; opacity:.9; margin:0 8px}
+    footer a:hover{color:var(--accent); opacity:1}
+
+    /* ----------- Responsive Nav / Layout ----------- */
+    @media (max-width: 900px){
+      .features{grid-template-columns:repeat(2,1fr)}
+    }
+    @media (max-width: 768px){
+      .menu-toggle{display:block}
+      #nav-menu{
+        display:none; position:absolute; right:16px; top:calc(var(--nav-h) + 8px);
+        width:220px; flex-direction:column; gap:12px; padding:14px;
+        background:var(--brand); border:1px solid rgba(255,255,255,.15); border-radius:12px;
+      }
+      .how-it-works{grid-template-columns:1fr}
+      .features{grid-template-columns:1fr}
+      .hero{background-position:center 22%}
+    }
+    @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
   </style>
 </head>
 <body>
-  <!-- Navbar -->
+
+  <!-- Nav -->
   <nav>
     <div class="logo">TryOnNow</div>
-    <div class="menu-toggle" onclick="toggleMenu()"><i class="fas fa-bars"></i></div>
+    <div class="menu-toggle" id="menuToggle" aria-label="Open menu" aria-expanded="false" role="button" tabindex="0">
+      <i class="fas fa-bars"></i>
+    </div>
     <ul id="nav-menu">
       <li><a href="#hero">Home</a></li>
       <li><a href="#how">How It Works</a></li>
@@ -126,104 +155,89 @@
     </ul>
   </nav>
 
-  <!-- Hero Section -->
-  <section class="hero" id="hero">
+  <!-- Hero -->
+  <section class="hero" id="hero" aria-label="Hero">
     <div class="hero-content">
       <h1>Try On Your Style Instantly with AI</h1>
       <p>Unlimited trials, instant results, share your look anywhere.</p>
-      <button class="btn" onclick="location.href='#cta'">Try Now</button>
+      <a class="btn" href="#cta">Try Now</a>
     </div>
   </section>
 
   <!-- How It Works -->
-  <section id="how">
-    <h2 class="section-title">How It Works</h2>
-    <div class="how-it-works">
-      <div class="step">
-        <i class="fas fa-upload"></i>
-        <h3>Upload Photo</h3>
-        <p>Upload your photo and get ready to try new styles instantly.</p>
-      </div>
-      <div class="step">
-        <i class="fas fa-tshirt"></i>
-        <h3>Try Outfits</h3>
-        <p>Choose from multiple outfits and see how they look on you in real-time.</p>
-      </div>
-      <div class="step">
-        <i class="fas fa-share-alt"></i>
-        <h3>Share & Save</h3>
-        <p>Share your looks with friends or save your favorite styles.</p>
+  <section id="how" aria-labelledby="how-title">
+    <div class="wrap">
+      <h2 id="how-title" class="section-title">How It Works</h2>
+      <div class="how-it-works">
+        <div class="step"><i class="fas fa-upload" aria-hidden="true"></i><h3>Upload Photo</h3><p>Upload your photo and get ready to try new styles instantly.</p></div>
+        <div class="step"><i class="fas fa-tshirt" aria-hidden="true"></i><h3>Try Outfits</h3><p>Pick outfits and see them on you in real-time.</p></div>
+        <div class="step"><i class="fas fa-share-alt" aria-hidden="true"></i><h3>Share &amp; Save</h3><p>Share your looks or save your favorites.</p></div>
       </div>
     </div>
   </section>
 
   <!-- Features -->
-  <section id="features">
-    <h2 class="section-title">Features</h2>
-    <div class="features">
-      <div class="feature-card">
-        <i class="fas fa-robot"></i>
-        <h3>AI Powered Try-On</h3>
-        <p>Advanced AI algorithms for realistic virtual try-on experience.</p>
-      </div>
-      <div class="feature-card">
-        <i class="fas fa-infinity"></i>
-        <h3>Unlimited Trials</h3>
-        <p>Try as many outfits as you want, completely free and instant.</p>
-      </div>
-      <div class="feature-card">
-        <i class="fas fa-share-alt"></i>
-        <h3>Social Sharing</h3>
-        <p>Share your looks instantly with friends on social media.</p>
-      </div>
-      <div class="feature-card">
-        <i class="fas fa-mobile-alt"></i>
-        <h3>Mobile Friendly</h3>
-        <p>Fully responsive and works perfectly on mobile devices.</p>
+  <section id="features" aria-labelledby="features-title">
+    <div class="wrap">
+      <h2 id="features-title" class="section-title">Features</h2>
+      <div class="features">
+        <div class="feature-card"><i class="fas fa-robot" aria-hidden="true"></i><h3>AI Powered Try-On</h3><p>Advanced AI for realistic results.</p></div>
+        <div class="feature-card"><i class="fas fa-infinity" aria-hidden="true"></i><h3>Unlimited Trials</h3><p>Try as many looks as you want.</p></div>
+        <div class="feature-card"><i class="fas fa-share-alt" aria-hidden="true"></i><h3>Social Sharing</h3><p>Share instantly with your friends.</p></div>
+        <div class="feature-card"><i class="fas fa-mobile-alt" aria-hidden="true"></i><h3>Mobile Friendly</h3><p>Beautiful on any device.</p></div>
       </div>
     </div>
   </section>
 
   <!-- Testimonials -->
-  <section class="testimonials" id="testimonials">
-    <h2 class="section-title">What Users Say</h2>
-    <div class="testimonial">
-      <p>"This AI try-on is amazing! I love how realistic the outfits look."</p>
-      <h4>- Sarah K.</h4>
-    </div>
-    <div class="testimonial">
-      <p>"Finally, a platform where I can try unlimited outfits without wasting time."</p>
-      <h4>- John D.</h4>
+  <section class="testimonials" id="testimonials" aria-labelledby="testimonials-title">
+    <div class="wrap">
+      <h2 id="testimonials-title" class="section-title" style="color:#fff;">What Users Say</h2>
+      <div class="testimonial"><p>"This AI try-on is amazing! The outfits look so realistic."</p><h4>- Sarah K.</h4></div>
+      <div class="testimonial"><p>"Finally, a place to try unlimited outfits without wasting time."</p><h4>- John D.</h4></div>
     </div>
   </section>
 
-  <!-- CTA Section -->
-  <section class="cta" id="cta">
-    <h2>Start Your Virtual Try-On Now</h2>
-    <button class="btn" onclick="location.href='https://tryonnow.github.io/tryonnow/'">Try Now</button>
+  <!-- CTA -->
+  <section class="cta" id="cta" aria-label="Call to action">
+    <div class="wrap" style="text-align:center">
+      <h2>Start Your Virtual Try-On Now</h2>
+      <a class="btn" href="https://tryonnow.github.io/tryonnow/">Try Now</a>
+    </div>
   </section>
 
   <!-- Footer -->
-  <footer id="contact">
-    <p>Contact Us: info@tryonnow.com | +91 12345 67890</p>
-    <div>
-      <a href="#"><i class="fab fa-facebook-f"></i></a>
-      <a href="#"><i class="fab fa-instagram"></i></a>
-      <a href="#"><i class="fab fa-twitter"></i></a>
+  <footer id="contact" aria-label="Footer">
+    <p>Contact Us: info@tryonnow.com &nbsp;|&nbsp; +91 12345 67890</p>
+    <div style="margin:10px 0 16px;">
+      <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+      <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+      <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
     </div>
     <p>&copy; 2025 TryOnNow. All rights reserved.</p>
   </footer>
 
   <script>
-    function toggleMenu(){
-      const menu = document.getElementById('nav-menu');
-      if(menu.style.display === "flex"){
-          menu.style.display = "none";
-      } else {
-          menu.style.display = "flex";
-          menu.style.flexDirection = "column";
-      }
+    // Mobile menu toggling
+    const toggle = document.getElementById('menuToggle');
+    const menu = document.getElementById('nav-menu');
+
+    function setMenu(open){
+      if(!menu) return;
+      menu.style.display = open ? 'flex' : 'none';
+      menu.style.flexDirection = open ? 'column' : '';
+      toggle && toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
     }
+    if(toggle){
+      toggle.addEventListener('click', ()=> setMenu(menu.style.display !== 'flex'));
+      toggle.addEventListener('keydown', e => {
+        if(e.key === 'Enter' || e.key === ' '){
+          e.preventDefault(); setMenu(menu.style.display !== 'flex');
+        }
+      });
+    }
+    // Close menu when clicking a link
+    menu && menu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => setMenu(false)));
   </script>
 </body>
 </html>
