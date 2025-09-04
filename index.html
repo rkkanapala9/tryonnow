@@ -1,225 +1,50 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>TryOnNow - Ultimate AI Virtual Try-On</title>
-<link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Montserrat:wght@700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+<!-- Performance/Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Montserrat:wght@700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
 <style>
-/* Global Styles */
-* {margin:0; padding:0; box-sizing:border-box;}
-body {font-family:'Lato', sans-serif; line-height:1.6; color:#333;}
-a {text-decoration:none; color:inherit;}
-img {max-width:100%; display:block;}
+/* --------- Base --------- */
+* { box-sizing: border-box; }
+:root {
+  --brand:#0D3B66;
+  --accent:#F95738;
+  --text:#333;
+  --muted:#555;
+  --overlay: rgba(0,0,0,.45);
+  --nav-h: 68px;
+}
+html { scroll-behavior: smooth; }
+body {
+  margin:0;
+  font-family: 'Lato', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  line-height:1.6;
+  color:var(--text);
+  -webkit-font-smoothing: antialiased;
+  background:#fff;
+}
+a { color:inherit; text-decoration:none; }
+img { max-width:100%; display:block; }
 
-/* Navbar */
-nav {display:flex; justify-content:space-between; align-items:center; padding:20px 50px; background:#0D3B66; color:white; position:sticky; top:0; z-index:1000;}
-nav .logo {font-family:'Montserrat', sans-serif; font-size:28px; font-weight:700;}
-nav ul {display:flex; list-style:none;}
-nav ul li {margin-left:30px;}
-nav ul li a {color:white; font-weight:600; transition:0.3s;}
-nav ul li a:hover {color:#F95738;}
-nav .menu-toggle {display:none; font-size:24px; cursor:pointer;}
-
-/* Hero */
-.hero {
-  height:100vh;
-  background: url("hero-background.jpg") no-repeat center top/cover;
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  align-items:center;
+/* --------- Layout helpers --------- */
+.container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+section { padding: 80px 0; scroll-margin-top: calc(var(--nav-h) + 16px); }
+.section-title {
   text-align:center;
-  color:white;
-  padding:0 20px;
-  position:relative;
+  font-family:'Montserrat', sans-serif;
+  font-size: 32px;
+  margin-bottom: 40px;
+  color: var(--brand);
 }
-.hero::before {
-  content: "";
-  position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0, 0, 0, 0.4); /* dark overlay for readability */
-  z-index: 1;
-}
-.hero * {
-  position: relative;
-  z-index: 2;
-}
-.hero h1 {font-family:'Montserrat', sans-serif; font-size:48px; margin-bottom:20px; text-shadow:2px 2px 8px rgba(0,0,0,0.5);}
-.hero p {font-size:20px; margin-bottom:30px;}
-.hero .btn {background:#F95738; padding:15px 30px; color:white; font-weight:700; border:none; border-radius:5px; cursor:pointer; transition:0.3s;}
-.hero .btn:hover {background:#ff5f2d;}
 
-/* Sections */
-section {padding:80px 50px;}
-.section-title {text-align:center; font-family:'Montserrat', sans-serif; font-size:32px; margin-bottom:50px; color:#0D3B66;}
-
-/* How It Works */
-.how-it-works {display:flex; flex-wrap:wrap; justify-content:center; gap:30px;}
-.step {background:#f5f5f5; padding:30px; border-radius:10px; width:300px; text-align:center; transition:0.3s; box-shadow:0 5px 15px rgba(0,0,0,0.1);}
-.step:hover {transform:translateY(-10px);}
-.step i {font-size:40px; color:#0D3B66; margin-bottom:20px;}
-.step h3 {font-size:22px; margin-bottom:10px;}
-.step p {font-size:16px; color:#555;}
-
-/* Features */
-.features {display:flex; flex-wrap:wrap; justify-content:center; gap:30px;}
-.feature-card {background:#f5f5f5; padding:30px; border-radius:10px; width:280px; text-align:center; transition:0.3s; box-shadow:0 5px 15px rgba(0,0,0,0.1);}
-.feature-card i {font-size:40px; color:#F95738; margin-bottom:20px;}
-.feature-card h3 {font-size:20px; margin-bottom:10px;}
-.feature-card p {color:#555;}
-
-/* Testimonials */
-.testimonials {background:#0D3B66; color:white; text-align:center; padding:80px 20px;}
-.testimonial {max-width:500px; margin:0 auto 40px;}
-.testimonial p {font-style:italic; margin-bottom:10px;}
-.testimonial h4 {font-weight:700;}
-
-/* CTA */
-.cta {background:#F95738; color:white; text-align:center; padding:80px 20px;}
-.cta h2 {font-size:36px; margin-bottom:20px;}
-.cta .btn {background:white; color:#F95738; padding:15px 30px; font-weight:700; border:none; border-radius:5px; cursor:pointer; transition:0.3s;}
-.cta .btn:hover {background:#ffd9c2;}
-
-/* Footer */
-footer {background:#333; color:white; text-align:center; padding:40px 20px;}
-footer a {color:white; margin:0 10px; transition:0.3s;}
-footer a:hover {color:#F95738;}
-
-/* Responsive */
-@media(max-width:768px){
-    nav ul {flex-direction:column; background:#0D3B66; position:absolute; top:70px; right:0; width:200px; display:none; padding:20px;}
-    nav ul li {margin:15px 0;}
-    nav .menu-toggle {display:block;}
-    .how-it-works, .features {flex-direction:column; align-items:center;}
-    .hero h1 {font-size:32px;}
-    .hero p {font-size:16px;}
-    .hero {padding:40px 20px;}
-}
-</style>
-</head>
-<body>
-<!-- Navbar -->
-<nav>
-    <div class="logo">TryOnNow</div>
-    <div class="menu-toggle" onclick="toggleMenu()"><i class="fas fa-bars"></i></div>
-    <ul id="nav-menu">
-        <li><a href="#hero">Home</a></li>
-        <li><a href="#how">How It Works</a></li>
-        <li><a href="#features">Features</a></li>
-        <li><a href="#testimonials">Testimonials</a></li>
-        <li><a href="#cta">Try Now</a></li>
-        <li><a href="#contact">Contact</a></li>
-    </ul>
-</nav>
-
-<!-- Hero Section -->
-<section class="hero" id="hero">
-    <h1>Try On Your Style Instantly with AI</h1>
-    <p>Unlimited trials, instant results, share your look anywhere.</p>
-    <button class="btn" onclick="location.href='#cta'">Try Now</button>
-</section>
-
-<!-- How It Works -->
-<section id="how">
-    <h2 class="section-title">How It Works</h2>
-    <div class="how-it-works">
-        <div class="step">
-            <i class="fas fa-upload"></i>
-            <h3>Upload Photo</h3>
-            <p>Upload your photo and get ready to try new styles instantly.</p>
-            <img src="https://via.placeholder.com/250x150.png?text=Step+1" alt="Step 1 Image" style="margin-top:15px;">
-        </div>
-        <div class="step">
-            <i class="fas fa-tshirt"></i>
-            <h3>Try Outfits</h3>
-            <p>Choose from multiple outfits and see how they look on you in real-time.</p>
-            <img src="https://via.placeholder.com/250x150.png?text=Step+2" alt="Step 2 Image" style="margin-top:15px;">
-        </div>
-        <div class="step">
-            <i class="fas fa-share-alt"></i>
-            <h3>Share & Save</h3>
-            <p>Share your looks with friends or save your favorite styles.</p>
-            <img src="https://via.placeholder.com/250x150.png?text=Step+3" alt="Step 3 Image" style="margin-top:15px;">
-        </div>
-    </div>
-</section>
-
-<!-- Features -->
-<section id="features">
-    <h2 class="section-title">Features</h2>
-    <div class="features">
-        <div class="feature-card">
-            <i class="fas fa-robot"></i>
-            <h3>AI Powered Try-On</h3>
-            <p>Advanced AI algorithms for realistic virtual try-on experience.</p>
-            <img src="https://via.placeholder.com/200x150.png?text=Feature+1" alt="Feature 1 Image" style="margin-top:15px;">
-        </div>
-        <div class="feature-card">
-            <i class="fas fa-infinity"></i>
-            <h3>Unlimited Trials</h3>
-            <p>Try as many outfits as you want, completely free and instant.</p>
-            <img src="https://via.placeholder.com/200x150.png?text=Feature+2" alt="Feature 2 Image" style="margin-top:15px;">
-        </div>
-        <div class="feature-card">
-            <i class="fas fa-share-alt"></i>
-            <h3>Social Sharing</h3>
-            <p>Share your looks instantly with friends on social media.</p>
-            <img src="https://via.placeholder.com/200x150.png?text=Feature+3" alt="Feature 3 Image" style="margin-top:15px;">
-        </div>
-        <div class="feature-card">
-            <i class="fas fa-mobile-alt"></i>
-            <h3>Mobile Friendly</h3>
-            <p>Fully responsive and works perfectly on mobile devices.</p>
-            <img src="https://via.placeholder.com/200x150.png?text=Feature+4" alt="Feature 4 Image" style="margin-top:15px;">
-        </div>
-    </div>
-</section>
-
-<!-- Testimonials -->
-<section class="testimonials" id="testimonials">
-    <h2 class="section-title">What Users Say</h2>
-    <div class="testimonial">
-        <p>"This AI try-on is amazing! I love how realistic the outfits look."</p>
-        <h4>- Sarah K.</h4>
-        <img src="https://via.placeholder.com/100.png?text=User+1" alt="User 1" style="margin-top:15px; border-radius:50%;">
-    </div>
-    <div class="testimonial">
-        <p>"Finally, a platform where I can try unlimited outfits without wasting time."</p>
-        <h4>- John D.</h4>
-        <img src="https://via.placeholder.com/100.png?text=User+2" alt="User 2" style="margin-top:15px; border-radius:50%;">
-    </div>
-</section>
-
-<!-- CTA Section -->
-<section class="cta" id="cta">
-    <h2>Start Your Virtual Try-On Now</h2>
-    <button class="btn" onclick="location.href='https://tryonnow.github.io/tryonnow/'">Try Now</button>
-    <img src="https://via.placeholder.com/400x250.png?text=CTA+Image" alt="CTA Image" style="margin-top:30px; max-width:400px;">
-</section>
-
-<!-- Footer -->
-<footer id="contact">
-    <p>Contact Us: info@tryonnow.com | +91 12345 67890</p>
-    <div>
-        <a href="#"><i class="fab fa-facebook-f"></i></a>
-        <a href="#"><i class="fab fa-instagram"></i></a>
-        <a href="#"><i class="fab fa-twitter"></i></a>
-    </div>
-    <p>&copy; 2025 TryOnNow. All rights reserved.</p>
-</footer>
-
-<script>
-function toggleMenu(){
-    const menu = document.getElementById('nav-menu');
-    if(menu.style.display === "flex"){
-        menu.style.display = "none";
-    } else {
-        menu.style.display = "flex";
-        menu.style.flexDirection = "column";
-    }
-}
-</script>
-</body>
-</html>
+/* --------- Navbar --------- */
+nav {
+  position: s
