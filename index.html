@@ -87,4 +87,169 @@ section { padding: 60px 20px; }
 /* How It Works */
 .how-it-works {
   display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap
+  gap: 24px;
+}
+.step {
+  background: #f7f7f7; padding: 24px; border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1); text-align: center;
+}
+.step i {
+  font-size: 38px; color: var(--brand); margin-bottom: 12px;
+}
+.step h3 { font-size: 20px; margin-bottom: 8px; }
+
+/* Features */
+.features {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 24px;
+}
+.feature-card {
+  background: #f7f7f7; padding: 24px; border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1); text-align: center;
+}
+.feature-card i {
+  font-size: 38px; color: var(--accent); margin-bottom: 12px;
+}
+.feature-card h3 { font-size: 20px; margin-bottom: 8px; }
+
+/* Testimonials */
+.testimonials {
+  background: var(--brand); color: #fff;
+  text-align: center; padding: 60px 20px;
+}
+.testimonial {
+  max-width: 600px; margin: 0 auto 24px;
+}
+.testimonial p { font-style: italic; margin-bottom: 8px; }
+
+/* CTA */
+.cta {
+  background: var(--accent); color: #fff;
+  text-align: center; padding: 60px 20px;
+}
+.cta h2 { font-size: clamp(24px, 5vw, 36px); margin-bottom: 16px; }
+
+/* Footer */
+footer {
+  background: #222; color: #fff; text-align: center; padding: 40px 20px;
+}
+footer a { color: #FFD; margin: 0 6px; font-size: 1.2rem; }
+
+/* Mobile Menu */
+@media (max-width: 768px) {
+  .menu-toggle { display: block; }
+  nav ul {
+    display: none; flex-direction: column;
+    background: var(--brand); position: absolute;
+    top: 60px; right: 16px; padding: 16px; border-radius: 8px;
+  }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">TryOnNow</div>
+  <div class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></div>
+  <ul id="navMenu">
+    <li><a href="#hero">Home</a></li>
+    <li><a href="#how">How It Works</a></li>
+    <li><a href="#features">Features</a></li>
+    <li><a href="#testimonials">Testimonials</a></li>
+    <li><a href="#cta">Try Now</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<section class="hero" id="hero">
+  <div class="content">
+    <h1>Try On Your Style Instantly with AI</h1>
+    <p>Unlimited trials, instant results, share your look anywhere.</p>
+    <a class="btn" href="#cta">Try Now</a>
+  </div>
+</section>
+
+<section id="how">
+  <div class="wrap">
+    <h2 class="section-title">How It Works</h2>
+    <div class="how-it-works">
+      <div class="step">
+        <i class="fas fa-upload"></i>
+        <h3>Upload Photo</h3>
+      </div>
+      <div class="step">
+        <i class="fas fa-tshirt"></i>
+        <h3>Try Outfits</h3>
+      </div>
+      <div class="step">
+        <i class="fas fa-share-alt"></i>
+        <h3>Share & Save</h3>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="features">
+  <div class="wrap">
+    <h2 class="section-title">Features</h2>
+    <div class="features">
+      <div class="feature-card">
+        <i class="fas fa-robot"></i>
+        <h3>AI Powered Try-On</h3>
+      </div>
+      <div class="feature-card">
+        <i class="fas fa-infinity"></i>
+        <h3>Unlimited Trials</h3>
+      </div>
+      <div class="feature-card">
+        <i class="fas fa-share-alt"></i>
+        <h3>Social Sharing</h3>
+      </div>
+      <div class="feature-card">
+        <i class="fas fa-mobile-alt"></i>
+        <h3>Mobile Friendly</h3>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="testimonials" id="testimonials">
+  <div class="wrap">
+    <h2 class="section-title" style="color:#fff;">What Users Say</h2>
+    <div class="testimonial"><p>"This AI try-on is amazing! The outfits look so realistic."</p><h4>- Sarah K.</h4></div>
+    <div class="testimonial"><p>"Finally, a place to try unlimited outfits without wasting time."</p><h4>- John D.</h4></div>
+  </div>
+</section>
+
+<section class="cta" id="cta">
+  <div class="wrap">
+    <h2>Start Your Virtual Try-On Now</h2>
+    <a class="btn" href="https://tryonnow.github.io/tryonnow/">Try Now</a>
+  </div>
+</section>
+
+<footer id="contact">
+  <p>Contact Us: info@tryonnow.com | +91 12345 67890</p>
+  <div>
+    <a href="#"><i class="fab fa-facebook-f"></i></a>
+    <a href="#"><i class="fab fa-instagram"></i></a>
+    <a href="#"><i class="fab fa-twitter"></i></a>
+  </div>
+  <p>&copy; 2025 TryOnNow. All rights reserved.</p>
+</footer>
+
+<script>
+/* Mobile menu toggle */
+const toggle = document.getElementById('menuToggle');
+const menu = document.getElementById('navMenu');
+toggle && toggle.addEventListener('click', () => {
+  const shown = menu.style.display === 'flex';
+  menu.style.display = shown ? 'none' : 'flex';
+});
+menu && menu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
+  if (window.innerWidth < 768) menu.style.display = 'none';
+}));
+</script>
+
+</body>
+</html>
