@@ -5,153 +5,127 @@
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>TryOnNow - Ultimate AI Virtual Try-On</title>
 <meta name="description" content="TryOnNow — AI-powered virtual try-on. Unlimited trials, instant results, and one-tap sharing." />
-
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Montserrat:wght@700&display=swap" rel="stylesheet" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
 <style>
-:root {
-  --brand: #0D3B66;
-  --accent: #F95738;
-  --ink: #333;
-  --paper: #fff;
-}
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: 'Lato', sans-serif; line-height: 1.6; color: var(--ink); background: var(--paper); }
-a { text-decoration: none; color: inherit; }
-
-/* Smooth scroll offsets */
-section[id] { scroll-margin-top: 90px; }
+:root { --brand:#0D3B66; --accent:#F95738; --ink:#333; --paper:#fff; }
+* { box-sizing:border-box; margin:0; padding:0; }
+body { font-family:'Lato',sans-serif; color:var(--ink); background:var(--paper); line-height:1.6; }
+a { text-decoration:none; color:inherit; }
+section[id]{ scroll-margin-top:84px; }
 
 /* Navbar */
-nav {
-  position: sticky; top: 0; z-index: 1000;
-  display: flex; justify-content: space-between; align-items: center;
-  background: var(--brand); padding: 18px 24px;
-  box-shadow: 0 3px 12px rgba(0,0,0,0.2);
+nav{
+  position:sticky; top:0; z-index:1000;
+  display:flex; justify-content:space-between; align-items:center;
+  background:var(--brand); color:#fff; padding:16px 20px;
+  box-shadow:0 4px 16px rgba(0,0,0,.15);
 }
-nav .logo { font-family: 'Montserrat', sans-serif; font-size: 28px; font-weight: 700; color: #fff; }
-nav ul { list-style: none; display: flex; gap: 24px; }
-nav ul a { color: #fff; font-weight: 600; transition: color 0.2s; }
-nav ul a:hover { color: var(--accent); }
-.menu-toggle { display: none; color: #fff; font-size: 24px; cursor: pointer; }
+nav .logo{ font-family:'Montserrat',sans-serif; font-size:28px; font-weight:700; }
+nav ul{ list-style:none; display:flex; gap:24px; }
+nav ul a{ font-weight:700; }
+nav ul a:hover{ color:var(--accent); }
+.menu-toggle{ display:none; color:#fff; font-size:22px; cursor:pointer; padding:8px 10px; border:1px solid rgba(255,255,255,.25); border-radius:10px; }
 
 /* Hero */
-.hero {
-  position: relative; min-height: 100vh;
-  display: flex; align-items: center; justify-content: center;
-  text-align: center; color: #fff;
-  background: url("hero-background.jpg") no-repeat center 20% / cover;
+.hero{
+  position:relative; min-height:100dvh; min-height:100vh;
+  display:flex; align-items:center; justify-content:center; text-align:center; color:#fff; padding:0 20px;
+  /* IMPORTANT: make sure the file exists exactly with this name next to index.html */
+  background: url("hero-background.jpg?v=3") no-repeat center 15% / cover;
 }
-.hero::before {
-  content: ""; position: absolute; inset: 0;
-  background: linear-gradient(to bottom, rgba(0,0,0,0.6), rgba(0,0,0,0.4));
-  z-index: 0;
+.hero::before{
+  content:""; position:absolute; inset:0;
+  background: linear-gradient(to bottom, rgba(0,0,0,.58), rgba(0,0,0,.42));
 }
-.hero .content {
-  position: relative; z-index: 1; max-width: 800px;
-  animation: fadeInUp 0.8s ease-out 0.3s forwards;
-  opacity: 0; transform: translateY(12px);
+.hero .content{
+  position:relative; z-index:1; max-width:900px;
+  opacity:0; transform:translateY(12px); animation:fadeInUp .8s ease-out .25s forwards;
 }
-@keyframes fadeInUp {
-  to { opacity: 1; transform: translateY(0); }
+@keyframes fadeInUp{ to{ opacity:1; transform:translateY(0); } }
+.hero h1{
+  font-family:'Montserrat',sans-serif; line-height:1.1;
+  font-size:clamp(36px,5vw,60px); margin:0 0 16px;
+  text-shadow:0 6px 24px rgba(0,0,0,.5);
 }
-.hero h1 {
-  font-family: 'Montserrat', sans-serif;
-  font-size: clamp(36px, 6vw, 60px);
-  margin-bottom: 16px; text-shadow: 0 6px 24px rgba(0,0,0,0.5);
+.hero p{
+  font-size:clamp(18px,3vw,22px); margin:0 0 28px;
+  text-shadow:0 3px 18px rgba(0,0,0,.45);
 }
-.hero p {
-  font-size: clamp(18px, 3.5vw, 22px);
-  margin-bottom: 24px; text-shadow: 0 3px 18px rgba(0,0,0,0.45);
+.btn{
+  display:inline-block; background:var(--accent); color:#fff; font-weight:800; letter-spacing:.2px;
+  padding:14px 26px; border:none; border-radius:12px; cursor:pointer;
+  transition:transform .08s ease, box-shadow .2s ease, background .2s ease;
+  box-shadow:0 10px 24px rgba(249,87,56,.35);
 }
-.btn {
-  display: inline-block;
-  background: var(--accent); color: #fff; font-size: 1rem;
-  padding: 14px 28px; border-radius: 10px; font-weight: 700;
-  box-shadow: 0 8px 20px rgba(249,87,56,0.35);
-  transition: background 0.2s, transform 0.1s;
-}
-.btn:hover { background: #ff5f2d; transform: translateY(-2px); }
+.btn:hover{ background:#ff5f2d; transform:translateY(-1px); }
 
 /* Sections */
-section { padding: 60px 20px; }
-.wrap { max-width: 1100px; margin: auto; }
-.section-title {
-  font-family: 'Montserrat', sans-serif; font-size: 30px; color: var(--brand);
-  text-align: center; margin-bottom: 42px;
+section{ padding:72px 20px; }
+.wrap{ max-width:1100px; margin:0 auto; }
+.section-title{
+  text-align:center; color:var(--brand);
+  font-family:'Montserrat',sans-serif; font-size:32px; margin:0 0 36px;
 }
 
-/* How It Works */
-.how-it-works {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 24px;
+/* How It Works (icons only) */
+.how-it-works{ display:grid; grid-template-columns:repeat(3,minmax(220px,1fr)); gap:24px; }
+.step{
+  background:#f7f7f7; padding:28px; border-radius:14px; text-align:center;
+  box-shadow:0 6px 16px rgba(0,0,0,.08);
 }
-.step {
-  background: #f7f7f7; padding: 24px; border-radius: 12px;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.1); text-align: center;
-}
-.step i {
-  font-size: 38px; color: var(--brand); margin-bottom: 12px;
-}
-.step h3 { font-size: 20px; margin-bottom: 8px; }
+.step i{ font-size:40px; color:var(--brand); margin-bottom:14px; display:block; }
+.step h3{ font-size:20px; margin:8px 0; }
 
-/* Features */
-.features {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 24px;
+/* Features (icons only) */
+.features{ display:grid; grid-template-columns:repeat(4,minmax(200px,1fr)); gap:24px; }
+.feature-card{
+  background:#f7f7f7; padding:26px; border-radius:14px; text-align:center; box-shadow:0 6px 16px rgba(0,0,0,.08);
 }
-.feature-card {
-  background: #f7f7f7; padding: 24px; border-radius: 12px;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.1); text-align: center;
-}
-.feature-card i {
-  font-size: 38px; color: var(--accent); margin-bottom: 12px;
-}
-.feature-card h3 { font-size: 20px; margin-bottom: 8px; }
+.feature-card i{ font-size:40px; color:var(--accent); margin-bottom:14px; display:block; }
+.feature-card h3{ font-size:18px; margin:8px 0; }
 
-/* Testimonials */
-.testimonials {
-  background: var(--brand); color: #fff;
-  text-align: center; padding: 60px 20px;
-}
-.testimonial {
-  max-width: 600px; margin: 0 auto 24px;
-}
-.testimonial p { font-style: italic; margin-bottom: 8px; }
+/* Testimonials (text only) */
+.testimonials{ background:var(--brand); color:#fff; text-align:center; padding:72px 20px; }
+.testimonial{ max-width:640px; margin:0 auto 28px; }
+.testimonial p{ font-style:italic; margin:0 0 8px; }
 
 /* CTA */
-.cta {
-  background: var(--accent); color: #fff;
-  text-align: center; padding: 60px 20px;
-}
-.cta h2 { font-size: clamp(24px, 5vw, 36px); margin-bottom: 16px; }
+.cta{ background:var(--accent); color:#fff; text-align:center; padding:72px 20px; }
+.cta h2{ font-size:clamp(24px,5vw,36px); margin:0 0 18px; }
+.cta .btn{ background:#fff; color:var(--accent); box-shadow:none; }
+.cta .btn:hover{ background:#ffe7df; }
 
 /* Footer */
-footer {
-  background: #222; color: #fff; text-align: center; padding: 40px 20px;
-}
-footer a { color: #FFD; margin: 0 6px; font-size: 1.2rem; }
+footer{ background:#222; color:#fff; text-align:center; padding:42px 20px; }
+footer a{ color:#fff; opacity:.9; margin:0 8px; }
+footer a:hover{ color:var(--accent); opacity:1; }
 
-/* Mobile Menu */
-@media (max-width: 768px) {
-  .menu-toggle { display: block; }
-  nav ul {
-    display: none; flex-direction: column;
-    background: var(--brand); position: absolute;
-    top: 60px; right: 16px; padding: 16px; border-radius: 8px;
+/* Mobile */
+@media (max-width:992px){ .features{ grid-template-columns:repeat(2,1fr); } }
+@media (max-width:768px){
+  .menu-toggle{ display:block; }
+  nav ul{
+    display:none; flex-direction:column; position:absolute; right:16px; top:64px; width:220px;
+    background:var(--brand); border:1px solid rgba(255,255,255,.15); padding:14px; border-radius:12px;
   }
+  .how-it-works, .features{ grid-template-columns:1fr; }
+  .hero{ background-position:center 22%; padding:40px 20px; }
+  .hero h1{ font-size:clamp(30px,7vw,36px); }
+  .hero p{ font-size:clamp(16px,4vw,18px); }
 }
+@media (prefers-reduced-motion:reduce){ *{ transition:none!important; animation:none!important; } }
 </style>
 </head>
 <body>
 
 <nav>
   <div class="logo">TryOnNow</div>
-  <div class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></div>
-  <ul id="navMenu">
+  <div class="menu-toggle" id="menuToggle" aria-label="Open menu" aria-expanded="false" role="button" tabindex="0"><i class="fas fa-bars"></i></div>
+  <ul id="nav-menu">
     <li><a href="#hero">Home</a></li>
     <li><a href="#how">How It Works</a></li>
     <li><a href="#features">Features</a></li>
@@ -173,18 +147,9 @@ footer a { color: #FFD; margin: 0 6px; font-size: 1.2rem; }
   <div class="wrap">
     <h2 class="section-title">How It Works</h2>
     <div class="how-it-works">
-      <div class="step">
-        <i class="fas fa-upload"></i>
-        <h3>Upload Photo</h3>
-      </div>
-      <div class="step">
-        <i class="fas fa-tshirt"></i>
-        <h3>Try Outfits</h3>
-      </div>
-      <div class="step">
-        <i class="fas fa-share-alt"></i>
-        <h3>Share & Save</h3>
-      </div>
+      <div class="step"><i class="fas fa-upload" aria-hidden="true"></i><h3>Upload Photo</h3></div>
+      <div class="step"><i class="fas fa-tshirt" aria-hidden="true"></i><h3>Try Outfits</h3></div>
+      <div class="step"><i class="fas fa-share-alt" aria-hidden="true"></i><h3>Share &amp; Save</h3></div>
     </div>
   </div>
 </section>
@@ -193,22 +158,10 @@ footer a { color: #FFD; margin: 0 6px; font-size: 1.2rem; }
   <div class="wrap">
     <h2 class="section-title">Features</h2>
     <div class="features">
-      <div class="feature-card">
-        <i class="fas fa-robot"></i>
-        <h3>AI Powered Try-On</h3>
-      </div>
-      <div class="feature-card">
-        <i class="fas fa-infinity"></i>
-        <h3>Unlimited Trials</h3>
-      </div>
-      <div class="feature-card">
-        <i class="fas fa-share-alt"></i>
-        <h3>Social Sharing</h3>
-      </div>
-      <div class="feature-card">
-        <i class="fas fa-mobile-alt"></i>
-        <h3>Mobile Friendly</h3>
-      </div>
+      <div class="feature-card"><i class="fas fa-robot" aria-hidden="true"></i><h3>AI Powered Try-On</h3></div>
+      <div class="feature-card"><i class="fas fa-infinity" aria-hidden="true"></i><h3>Unlimited Trials</h3></div>
+      <div class="feature-card"><i class="fas fa-share-alt" aria-hidden="true"></i><h3>Social Sharing</h3></div>
+      <div class="feature-card"><i class="fas fa-mobile-alt" aria-hidden="true"></i><h3>Mobile Friendly</h3></div>
     </div>
   </div>
 </section>
@@ -222,34 +175,38 @@ footer a { color: #FFD; margin: 0 6px; font-size: 1.2rem; }
 </section>
 
 <section class="cta" id="cta">
-  <div class="wrap">
+  <div class="wrap" style="text-align:center;">
     <h2>Start Your Virtual Try-On Now</h2>
     <a class="btn" href="https://tryonnow.github.io/tryonnow/">Try Now</a>
   </div>
 </section>
 
 <footer id="contact">
-  <p>Contact Us: info@tryonnow.com | +91 12345 67890</p>
-  <div>
-    <a href="#"><i class="fab fa-facebook-f"></i></a>
-    <a href="#"><i class="fab fa-instagram"></i></a>
-    <a href="#"><i class="fab fa-twitter"></i></a>
+  <p>Contact Us: info@tryonnow.com &nbsp;|&nbsp; +91 12345 67890</p>
+  <div style="margin:10px 0 16px;">
+    <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+    <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+    <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
   </div>
   <p>&copy; 2025 TryOnNow. All rights reserved.</p>
 </footer>
 
 <script>
-/* Mobile menu toggle */
 const toggle = document.getElementById('menuToggle');
-const menu = document.getElementById('navMenu');
-toggle && toggle.addEventListener('click', () => {
-  const shown = menu.style.display === 'flex';
-  menu.style.display = shown ? 'none' : 'flex';
-});
-menu && menu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
-  if (window.innerWidth < 768) menu.style.display = 'none';
-}));
+const menu = document.getElementById('nav-menu');
+function setMenu(open){
+  if(!menu) return;
+  menu.style.display = open ? 'flex' : 'none';
+  menu.style.flexDirection = open ? 'column' : '';
+  if(toggle) toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+}
+if(toggle){
+  toggle.addEventListener('click', () => setMenu(menu.style.display !== 'flex'));
+  toggle.addEventListener('keydown', e => {
+    if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); setMenu(menu.style.display !== 'flex'); }
+  });
+}
+menu && menu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => setMenu(false)));
 </script>
-
 </body>
 </html>
