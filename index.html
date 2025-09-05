@@ -1,818 +1,729 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>TryOnNow — The Ultimate AI Virtual Stylist</title>
-    <meta name="description" content="AI-powered virtual try-on with a face-to-fashion suitability analysis." />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TryOnNow — The Ultimate AI Virtual Stylist</title>
+  <meta name="description" content="AI-powered virtual try-on with a face-to-fashion suitability analysis." />
 
-    <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
-    
-    <!-- Tailwind CSS & Three.js -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS & Three.js -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
-    <style>
-        :root {
-            --bg1: #050814;
-            --bg2: #0d1325;
-            --text: #f3f4f6;
-            --muted: #9ca3af;
-            --card: rgba(17, 24, 39, 0.7);
-            --line: rgba(148, 163, 184, 0.2);
-            --brand1: #6366f1;
-            --brand2: #14b8a6;
-            --cta: #f43f5e;
-        }
+  <style>
+    :root {
+      --bg1: #050814;
+      --bg2: #0d1325;
+      --text: #f3f4f6;
+      --muted: #9ca3af;
+      --card: rgba(17, 24, 39, 0.7);
+      --line: rgba(148, 163, 184, 0.2);
+      --brand1: #6366f1;
+      --brand2: #14b8a6;
+      --cta: #f43f5e;
+    }
 
-        html {
-            scroll-behavior: smooth;
-        }
-        body {
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(180deg, var(--bg1), var(--bg2));
-            color: var(--text);
-            line-height: 1.7;
-            overflow-x: hidden;
-        }
-        
-        /* Reusable UI */
-        .card {
-            background: var(--card);
-            border: 1px solid var(--line);
-            box-shadow: 0 10px 40px rgba(0,0,0,0.25);
-        }
-        .chip {
-            border: 1px solid var(--line);
-            background: rgba(255,255,255,0.03);
-        }
-        .cta-btn {
-            background: var(--cta);
-        }
-        .cta-btn:hover {
-            filter: brightness(1.05);
-        }
-        .section-title {
-            letter-spacing: 0.4px;
-        }
-        .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-        .modal-content {
-            background: var(--bg2);
-            padding: 2rem;
-            border-radius: 1.5rem;
-            max-width: 90%;
-            width: 1000px;
-            position: relative;
-        }
-        .glass {
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.08);
-            backdrop-filter: blur(8px);
-        }
-        .gradient-text {
-            background: linear-gradient(90deg, var(--brand1), var(--brand2));
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-        .loading-spinner {
-            border: 4px solid rgba(0, 0, 0, 0.1);
-            border-left-color: #f43f5e;
-            border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-/* --- Alignment & UX enhancements (no color changes) --- */
-img { max-width: 100%; height: auto; display: block; }
-.modal[aria-modal="true"] { display: none; }
-.modal[aria-modal="true"].open { display: flex; }
-.faq-answer { overflow: hidden; max-height: 0; opacity: 0; transition: max-height 300ms ease, opacity 300ms ease; }
-.faq-answer.open { max-height: 320px; opacity: 1; }
-@media (max-width: 640px) {
-  .container { padding-left: 1rem; padding-right: 1rem; }
-}
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(180deg, var(--bg1), var(--bg2));
+      color: var(--text);
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
 
-    </style>
+    /* Reusable UI */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      box-shadow: 0 10px 40px rgba(0,0,0,0.25);
+    }
+    .chip { border: 1px solid var(--line); background: rgba(255,255,255,0.03); }
+    .cta-btn { background: var(--cta); }
+    .cta-btn:hover { filter: brightness(1.05); }
+    .section-title { letter-spacing: 0.4px; }
+    .modal {
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background-color: rgba(0, 0, 0, 0.7);
+      display: none; justify-content: center; align-items: center; z-index: 1000;
+    }
+    .modal-content { background: var(--bg2); padding: 2rem; border-radius: 1.5rem; max-width: 90%; width: 1000px; position: relative; }
+    .glass { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); backdrop-filter: blur(8px); }
+    .gradient-text { background: linear-gradient(90deg, var(--brand1), var(--brand2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .loading-spinner { border: 4px solid rgba(0, 0, 0, 0.1); border-left-color: #f43f5e; border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
+    /* Alignment & UX */
+    img { max-width: 100%; height: auto; display: block; }
+    .modal[aria-modal="true"] { display: none; }
+    .modal[aria-modal="true"].open { display: flex; }
+    .faq-answer { overflow: hidden; max-height: 0; opacity: 0; transition: max-height 300ms ease, opacity 300ms ease; }
+    .faq-answer.open { max-height: 320px; opacity: 1; }
+    @media (max-width: 640px) { .container { padding-left: 1rem; padding-right: 1rem; } }
+  </style>
 </head>
 <body>
-    <!-- Header -->
-    <header class="fixed top-0 left-0 w-full z-50 bg-gray-900 bg-opacity-70 backdrop-blur-md border-b border-gray-700">
-        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
-            <a href="#" class="text-2xl font-bold tracking-wide text-white">TryOnNow</a>
-            <nav class="hidden md:flex items-center space-x-8">
-                <a href="#why" class="text-gray-400 hover:text-white transition-colors duration-300">Why</a>
-                <a href="#ai-stylist" class="text-gray-400 hover:text-white transition-colors duration-300">AI Stylist</a>
-                <a href="#how" class="text-gray-400 hover:text-white transition-colors duration-300">How</a>
-                <a href="#social-stylist" class="text-gray-400 hover:text-white transition-colors duration-300">Social Stylist</a>
-                <a href="#fit3d" class="text-gray-400 hover:text-white transition-colors duration-300">3D Fit</a>
-                <a href="#suggestions" class="text-gray-400 hover:text-white transition-colors duration-300">Suggestions</a>
-                <a href="#apps" class="text-gray-400 hover:text-white transition-colors duration-300">Apps</a>
-                <a href="#reviews" class="text-gray-400 hover:text-white transition-colors duration-300">Reviews</a>
-                <a href="#founder" class="text-gray-400 hover:text-white transition-colors duration-300">Founder</a>
-                <a href="#twinning-feature" class="text-gray-400 hover:text-white transition-colors duration-300">Twinning</a>
-                <a href="#faq" class="text-gray-400 hover:text-white transition-colors duration-300">FAQ</a>
-                <a href="#contact" class="text-gray-400 hover:text-white transition-colors duration-300">Contact</a>
-            </nav>
-            <button id="open-mobile-menu" class="md:hidden text-white focus:outline-none" aria-label="Open Menu">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
-            </button>
-        </div>
-        <!-- Mobile Menu -->
-        <div id="mobile-menu" class="md:hidden hidden bg-gray-900 bg-opacity-90">
-            <div class="container mx-auto px-4 py-4 space-y-2">
-                <a href="#why" class="block py-2 text-gray-300">Why</a>
-                <a href="#ai-stylist" class="block py-2 text-gray-300">AI Stylist</a>
-                <a href="#how" class="block py-2 text-gray-300">How</a>
-                <a href="#social-stylist" class="block py-2 text-gray-300">Social Stylist</a>
-                <a href="#fit3d" class="block py-2 text-gray-300">3D Fit</a>
-                <a href="#suggestions" class="block py-2 text-gray-300">Suggestions</a>
-                <a href="#apps" class="block py-2 text-gray-300">Apps</a>
-                <a href="#reviews" class="block py-2 text-gray-300">Reviews</a>
-                <a href="#founder" class="block py-2 text-gray-300">Founder</a>
-                <a href="#twinning-feature" class="block py-2 text-gray-300">Twinning</a>
-                <a href="#faq" class="block py-2 text-gray-300">FAQ</a>
-                <a href="#contact" class="block py-2 text-gray-300">Contact</a>
-            </div>
-        </div>
-    </header>
-
-    <!-- Hero -->
-    <section id="home" class="pt-28 pb-16">
-        <div class="container mx-auto px-4 grid md:grid-cols-2 gap-12 items-center">
-            <div>
-                <h1 class="text-4xl sm:text-5xl font-extrabold mb-4 leading-tight">
-                    Dress with <span class="gradient-text">Confidence</span> — Powered by AI
-                </h1>
-                <p class="text-gray-300 text-lg mb-8">Upload a photo, pick an occasion, and let TryOnNow suggest the perfect look — then share it with friends or try it in 3D.</p>
-                <div class="flex flex-wrap gap-3">
-                    <a href="#ai-stylist" class="px-6 py-3 rounded-lg cta-btn text-white font-semibold">Try AI Stylist</a>
-                    <a href="#social-stylist" class="px-6 py-3 rounded-lg chip text-white font-semibold">Open Social Stylist</a>
-                </div>
-            </div>
-            <div class="relative">
-                <div class="absolute -inset-8 rounded-3xl bg-gradient-to-tr from-indigo-500/20 to-teal-400/20 blur-2xl"></div>
-                <img src="https://images.unsplash.com/photo-1520975682039-e3b0dbf6cc0a?q=80&w=1200&auto=format&fit=crop" alt="Hero outfit" class="relative rounded-3xl shadow-xl border border-gray-700">
-            </div>
-        </div>
-    </section>
-
-    <!-- Why -->
-    <section id="why" class="py-16">
-        <div class="container mx-auto px-4">
-            <h2 class="section-title text-3xl sm:text-4xl font-bold text-center mb-12">Why TryOnNow?</h2>
-            <div class="grid md:grid-cols-3 gap-8">
-                <div class="card p-6 rounded-2xl">
-                    <p class="text-xl font-semibold">Face-to-Fashion Fit</p>
-                    <p class="text-gray-400">AI evaluates skin tone, hair, and body geometry to suggest flattering outfits that keep your vibe intact.</p>
-                </div>
-                <div class="card p-6 rounded-2xl">
-                    <p class="text-xl font-semibold">Instant Share</p>
-                    <p class="text-gray-400">Get a shareable image and poll your friends in seconds — right from the Social Stylist.</p>
-                </div>
-                <div class="card p-6 rounded-2xl">
-                    <p class="text-xl font-semibold">3D Fit Preview</p>
-                    <p class="text-gray-400">See approximate drape/sizing on a 3D mannequin and compare sizes across brands.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- AI Stylist -->
-    <section id="ai-stylist" class="py-16">
-        <div class="container mx-auto px-4 text-center">
-            <h2 class="text-3xl sm:text-4xl font-bold mb-6">Personal AI Stylist</h2>
-            <p class="text-lg text-gray-400 mb-8 max-w-2xl mx-auto">
-                Not sure what to wear? Get instant outfit suggestions by uploading a photo of yourself, the climate, and the event you're attending.
-            </p>
-            <div class="max-w-xl mx-auto card p-8 rounded-3xl space-y-6">
-                <div class="space-y-4 text-left">
-                    <div>
-                        <label for="ai-stylist-file-upload" class="block text-white font-semibold mb-2">1. Upload a Photo</label>
-                        <input type="file" id="ai-stylist-file-upload" accept="image/*" class="w-full file:px-4 file:py-2 file:rounded-lg file:border file:border-gray-600 file:bg-gray-800 file:text-white file:cursor-pointer" />
-                    </div>
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                        <div>
-                            <label class="block text-white font-semibold mb-2">Climate</label>
-                            <select id="climate-select" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-3">
-                                <option>Hot & Humid</option>
-                                <option>Warm</option>
-                                <option>Mild</option>
-                                <option>Cool</option>
-                                <option>Cold</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-white font-semibold mb-2">Occasion</label>
-                            <select id="occasion-select" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-3">
-                                <option>Casual Day Out</option>
-                                <option>Office</option>
-                                <option>Party</option>
-                                <option>Wedding</option>
-                                <option>Gym</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-white font-semibold mb-2">Style</label>
-                            <select id="style-select" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-3">
-                                <option>Minimal</option>
-                                <option>Streetwear</option>
-                                <option>Classic</option>
-                                <option>Boho</option>
-                                <option>Luxury</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                <div class="space-y-4 text-left">
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                        <div>
-                            <label class="block text-white font-semibold mb-2">Outfit</label>
-                            <select id="outfit-select" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-3">
-                                <option>Summer Linen Set</option>
-                                <option>Tailored Blazer</option>
-                                <option>Graphic Tee + Jeans</option>
-                                <option>Saree (Contemporary)</option>
-                                <option>Kurta + Chinos</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-white font-semibold mb-2">Background</label>
-                            <select id="background-select" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-3">
-                                <option>Studio</option>
-                                <option>Street</option>
-                                <option>Beach</option>
-                                <option>Office</option>
-                                <option>Garden</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-white font-semibold mb-2">Pose</label>
-                            <select id="pose-select" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-3">
-                                <option>Casual Standing</option>
-                                <option>Walking</option>
-                                <option>Sitting</option>
-                                <option>Leaning</option>
-                                <option>Turning</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                <button id="open-stylist-button" class="px-6 py-3 rounded-lg chip text-white font-semibold w-full">Open Social Stylist</button>
-            </div>
-        </div>
-    </section>
-
-    <!-- How it works -->
-    <section id="how" class="py-16 bg-gray-800 bg-opacity-30">
-        <div class="container mx-auto px-4">
-            <h2 class="text-3xl sm:text-4xl font-bold text-center mb-12">How it Works</h2>
-            <div class="grid md:grid-cols-3 gap-8">
-                <div class="card p-6 rounded-2xl">
-                    <p class="text-xl font-semibold">1. Upload</p>
-                    <p class="text-gray-400">Upload a photo and choose climate + occasion.</p>
-                </div>
-                <div class="card p-6 rounded-2xl">
-                    <p class="text-xl font-semibold">2. Generate</p>
-                    <p class="text-gray-400">Get a styled preview image you can share.</p>
-                </div>
-                <div class="card p-6 rounded-2xl">
-                    <p class="text-xl font-semibold">3. Try in 3D</p>
-                    <p class="text-gray-400">Test fit & drape on a 3D mannequin and pick size.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Social Stylist Modal -->
-    <div id="social-stylist-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="social-stylist-title">
-        <div class="modal-content">
-            <button id="close-modal-button" class="absolute top-4 right-4 text-white text-3xl font-bold leading-none" aria-label="Close">&times;</button>
-            <h3 id="social-stylist-title" class="text-3xl font-bold text-center mb-6">TryOnNow Social Stylist</h3>
-            <div class="flex flex-col lg:flex-row gap-8">
-                <!-- Inputs & Controls -->
-                <div class="flex-1 space-y-6">
-                    <div>
-                        <label for="user-image-input" class="block text-white font-semibold mb-2">1. Upload Your Photo</label>
-                        <input type="file" id="user-image-input" accept="image/*" class="w-full file:px-4 file:py-2 file:rounded-lg file:border file:border-gray-600 file:bg-gray-800 file:text-white file:cursor-pointer">
-                    </div>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-white font-semibold mb-2">Outfit</label>
-                            <select id="outfit-select" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-3">
-                                <option>Summer Linen Set</option>
-                                <option>Tailored Blazer</option>
-                                <option>Graphic Tee + Jeans</option>
-                                <option>Saree (Contemporary)</option>
-                                <option>Kurta + Chinos</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-white font-semibold mb-2">Background</label>
-                            <select id="background-select" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-3">
-                                <option>Studio</option>
-                                <option>Street</option>
-                                <option>Beach</option>
-                                <option>Office</option>
-                                <option>Garden</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-white font-semibold mb-2">Pose</label>
-                            <select id="pose-select" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-3">
-                                <option>Casual Standing</option>
-                                <option>Walking</option>
-                                <option>Sitting</option>
-                                <option>Leaning</option>
-                                <option>Turning</option>
-                            </select>
-                        </div>
-                    </div>
-                    <button id="generate-button" data-endpoint="/api/ai-stylist/suggest" class="cta-btn text-white py-3 px-6 rounded-lg font-bold w-full">
-                        Generate & Share Look
-                    </button>
-                </div>
-                <!-- Preview & Share -->
-                <div class="flex-1">
-                    <h4 class="text-xl font-semibold mb-3">Preview</h4>
-                    <div class="relative">
-                        <img id="generated-image-preview" src="https://placehold.co/400x600/0d1325/white?text=Preview" alt="Generated Look" class="rounded-xl border border-gray-700 transition-opacity duration-300 opacity-100" />
-                        <div id="loading-message" class="hidden absolute inset-0 flex items-center justify-center bg-black/50 rounded-xl">
-                            <div class="loading-spinner"></div>
-                        </div>
-                    </div>
-                    <div class="mt-4 flex gap-3">
-                        <button class="px-4 py-2 rounded-lg chip text-white">Download</button>
-                        <button class="px-4 py-2 rounded-lg chip text-white">Share</button>
-                    </div>
-                </div>
-            </div>
-        </div>
+  <!-- Header -->
+  <header class="fixed top-0 left-0 w-full z-50 bg-gray-900 bg-opacity-70 backdrop-blur-md border-b border-gray-700">
+    <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+      <a href="#" class="text-2xl font-bold tracking-wide text-white">TryOnNow</a>
+      <nav class="hidden md:flex items-center space-x-8">
+        <a href="#why" class="text-gray-400 hover:text-white transition-colors duration-300">Why</a>
+        <a href="#ai-stylist" class="text-gray-400 hover:text-white transition-colors duration-300">AI Stylist</a>
+        <a href="#how" class="text-gray-400 hover:text-white transition-colors duration-300">How</a>
+        <a href="#social-stylist" class="text-gray-400 hover:text-white transition-colors duration-300">Social Stylist</a>
+        <a href="#fit3d" class="text-gray-400 hover:text-white transition-colors duration-300">3D Fit</a>
+        <a href="#suggestions" class="text-gray-400 hover:text-white transition-colors duration-300">Suggestions</a>
+        <a href="#apps" class="text-gray-400 hover:text-white transition-colors duration-300">Apps</a>
+        <a href="#reviews" class="text-gray-400 hover:text-white transition-colors duration-300">Reviews</a>
+        <a href="#founder" class="text-gray-400 hover:text-white transition-colors duration-300">Founder</a>
+        <a href="#twinning-feature" class="text-gray-400 hover:text-white transition-colors duration-300">Twinning</a>
+        <a href="#faq" class="text-gray-400 hover:text-white transition-colors duration-300">FAQ</a>
+        <a href="#contact" class="text-gray-400 hover:text-white transition-colors duration-300">Contact</a>
+      </nav>
+      <button id="open-mobile-menu" class="md:hidden text-white focus:outline-none" aria-label="Open Menu">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
     </div>
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="md:hidden hidden bg-gray-900 bg-opacity-90">
+      <div class="container mx-auto px-4 py-4 space-y-2">
+        <a href="#why" class="block py-2 text-gray-300">Why</a>
+        <a href="#ai-stylist" class="block py-2 text-gray-300">AI Stylist</a>
+        <a href="#how" class="block py-2 text-gray-300">How</a>
+        <a href="#social-stylist" class="block py-2 text-gray-300">Social Stylist</a>
+        <a href="#fit3d" class="block py-2 text-gray-300">3D Fit</a>
+        <a href="#suggestions" class="block py-2 text-gray-300">Suggestions</a>
+        <a href="#apps" class="block py-2 text-gray-300">Apps</a>
+        <a href="#reviews" class="block py-2 text-gray-300">Reviews</a>
+        <a href="#founder" class="block py-2 text-gray-300">Founder</a>
+        <a href="#twinning-feature" class="block py-2 text-gray-300">Twinning</a>
+        <a href="#faq" class="block py-2 text-gray-300">FAQ</a>
+        <a href="#contact" class="block py-2 text-gray-300">Contact</a>
+      </div>
+    </div>
+  </header>
 
-    <!-- 3D FIT -->
-    <section id="fit3d" class="py-16">
-        <div class="container mx-auto px-4">
-            <h2 class="text-3xl sm:text-4xl font-bold text-center mb-12">Experience 3D Fit & Sizing Intelligence</h2>
-            <div class="grid md:grid-cols-2 gap-12 items-center">
-                <div class="card p-8 rounded-3xl">
-                    <p class="text-2xl font-semibold text-white mb-4">AI Fit Report</p>
-                    <div class="space-y-4">
-                        <div class="text-lg text-gray-300">
-                            <span class="font-bold text-white">Shoulder Fit:</span> <span class="text-indigo-400">Relaxed</span>
-                        </div>
-                        <div class="text-lg text-gray-300">
-                            <span class="font-bold text-white">Chest Fit:</span> <span class="text-indigo-400">True to Size</span>
-                        </div>
-                        <div class="text-lg text-gray-300">
-                            <span class="font-bold text-white">Length:</span> <span class="text-indigo-400">Regular</span>
-                        </div>
-                        <div class="text-lg text-gray-300">
-                            <span class="font-bold text-white">Size Suggestion:</span> <span class="text-indigo-400">Medium</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="relative">
-                    <canvas id="mannequin-canvas" class="w-full h-[400px] rounded-3xl border border-gray-700"></canvas>
-                    <div class="absolute inset-0 pointer-events-none rounded-3xl" style="background: radial-gradient( circle at 30% 20%, rgba(99,102,241,0.1), transparent 40%), radial-gradient( circle at 70% 80%, rgba(20,184,166,0.12), transparent 40% )"></div>
-                </div>
-            </div>
+  <!-- Hero -->
+  <section id="home" class="pt-28 pb-16">
+    <div class="container mx-auto px-4 grid md:grid-cols-2 gap-12 items-center">
+      <div>
+        <h1 class="text-4xl sm:text-5xl font-extrabold mb-4 leading-tight">
+          Dress with <span class="gradient-text">Confidence</span> — Powered by AI
+        </h1>
+        <p class="text-gray-300 text-lg mb-8">Upload a photo, pick an occasion, and let TryOnNow suggest the perfect look — then share it with friends or try it in 3D.</p>
+        <div class="flex flex-wrap gap-3">
+          <a href="#ai-stylist" class="px-6 py-3 rounded-lg cta-btn text-white font-semibold">Try AI Stylist</a>
+          <a href="#social-stylist" class="px-6 py-3 rounded-lg chip text-white font-semibold">Open Social Stylist</a>
         </div>
-    </section>
+      </div>
+      <div class="relative">
+        <div class="absolute -inset-8 rounded-3xl bg-gradient-to-tr from-indigo-500/20 to-teal-400/20 blur-2xl"></div>
+        <img src="https://images.unsplash.com/photo-1520975682039-e3b0dbf6cc0a?q=80&w=1200&auto=format&fit=crop" alt="Model wearing a stylish outfit" class="relative rounded-3xl shadow-xl border border-gray-700">
+      </div>
+    </div>
+  </section>
 
-    <!-- Smart Suggestions -->
-    <section id="suggestions" class="py-16 bg-gray-800 bg-opacity-30">
-        <div class="container mx-auto px-4">
-            <h2 class="text-3xl sm:text-4xl font-bold text-center mb-12">Smart Suggestions</h2>
-            <div class="grid md:grid-cols-3 gap-6">
-                <div class="card p-6 rounded-2xl">
-                    <p class="font-semibold">Shoes</p>
-                    <p class="text-gray-400">Minimal sneakers, loafers, or Kolhapuri sandals based on your selection.</p>
-                </div>
-                <div class="card p-6 rounded-2xl">
-                    <p class="font-semibold">Accessories</p>
-                    <p class="text-gray-400">Layered necklace, leather belt, or a silk pocket square for sharp finish.</p>
-                </div>
-                <div class="card p-6 rounded-2xl">
-                    <p class="font-semibold">Colors</p>
-                    <p class="text-gray-400">Palette tuned to your skin tone and hair (cool vs warm undertones).</p>
-                </div>
-            </div>
+  <!-- Why -->
+  <section id="why" class="py-16">
+    <div class="container mx-auto px-4">
+      <h2 class="section-title text-3xl sm:text-4xl font-bold text-center mb-12">Why TryOnNow?</h2>
+      <div class="grid md:grid-cols-3 gap-8">
+        <div class="card p-6 rounded-2xl">
+          <p class="text-xl font-semibold">Face-to-Fashion Fit</p>
+          <p class="text-gray-400">AI evaluates skin tone, hair, and body geometry to suggest flattering outfits that keep your vibe intact.</p>
         </div>
-    </section>
-
-    <!-- Apps -->
-    <section id="apps" class="py-16">
-        <div class="container mx-auto px-4">
-            <h2 class="text-3xl sm:text-4xl font-bold text-center mb-12">Get the Apps</h2>
-            <div class="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto">
-                <a class="card p-5 rounded-2xl flex items-center justify-between" href="#">
-                    <div>
-                        <p class="font-semibold">iOS</p>
-                        <p class="text-gray-400 text-sm">Optimized for iPhone 14+ cameras</p>
-                    </div>
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/3/3e/Apple_logo_white.svg" alt="Apple" class="w-8 h-8 opacity-80">
-                </a>
-                <a class="card p-5 rounded-2xl flex items-center justify-between" href="#">
-                    <div>
-                        <p class="font-semibold">Android</p>
-                        <p class="text-gray-400 text-sm">Works great on Pixel & Samsung</p>
-                    </div>
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/3/31/Android_robot_head.svg" alt="Android" class="w-8 h-8 opacity-80">
-                </a>
-            </div>
+        <div class="card p-6 rounded-2xl">
+          <p class="text-xl font-semibold">Instant Share</p>
+          <p class="text-gray-400">Get a shareable image and poll your friends in seconds — right from the Social Stylist.</p>
         </div>
-    </section>
-
-    <!-- Reviews -->
-    <section id="reviews" class="py-16 bg-gray-800 bg-opacity-30">
-        <div class="container mx-auto px-4">
-            <h2 class="text-3xl sm:text-4xl font-bold text-center mb-12">What People Say</h2>
-            <div class="grid md:grid-cols-3 gap-6">
-                <div class="card p-6 rounded-2xl">
-                    <p class="text-gray-300">“I finally know what to wear to weddings without spam-texting friends.”</p>
-                    <p class="mt-3 text-sm text-gray-400">— Aanya R.</p>
-                </div>
-                <div class="card p-6 rounded-2xl">
-                    <p class="text-gray-300">“The 3D mannequin sizing is scary-accurate for jackets.”</p>
-                    <p class="mt-3 text-sm text-gray-400">— Kiran M.</p>
-                </div>
-                <div class="card p-6 rounded-2xl">
-                    <p class="text-gray-300">“Shared my look on Instagram straight from the modal.”</p>
-                    <p class="mt-3 text-sm text-gray-400">— Zoya D.</p>
-                </div>
-            </div>
+        <div class="card p-6 rounded-2xl">
+          <p class="text-xl font-semibold">3D Fit Preview</p>
+          <p class="text-gray-400">See approximate drape/sizing on a 3D mannequin and compare sizes across brands.</p>
         </div>
-    </section>
+      </div>
+    </div>
+  </section>
 
-    <!-- Founder -->
-    <section id="founder" class="py-16">
-        <div class="container mx-auto px-4 grid md:grid-cols-2 gap-12 items-center">
-            <div class="relative">
-                <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=1200&auto=format&fit=crop" alt="Founder" class="rounded-3xl border border-gray-700 shadow-xl">
+  <!-- AI Stylist -->
+  <section id="ai-stylist" class="py-16">
+    <div class="container mx-auto px-4 text-center">
+      <h2 class="text-3xl sm:text-4xl font-bold mb-6">Personal AI Stylist</h2>
+      <p class="text-lg text-gray-400 mb-8 max-w-2xl mx-auto">
+        Not sure what to wear? Get instant outfit suggestions by uploading a photo of yourself, the climate, and the event you're attending.
+      </p>
+      <div class="max-w-xl mx-auto card p-8 rounded-3xl space-y-6">
+        <div class="space-y-4 text-left">
+          <div>
+            <label for="ai-stylist-file-upload" class="block text-white font-semibold mb-2">1. Upload a Photo</label>
+            <input type="file" id="ai-stylist-file-upload" accept="image/*" class="w-full file:px-4 file:py-2 file:rounded-lg file:border file:border-gray-600 file:bg-gray-800 file:text-white file:cursor-pointer" />
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div>
+              <label class="block text-white font-semibold mb-2">Climate</label>
+              <select id="climate-select" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-3">
+                <option>Hot & Humid</option>
+                <option>Warm</option>
+                <option>Mild</option>
+                <option>Cool</option>
+                <option>Cold</option>
+              </select>
             </div>
             <div>
-                <h3 class="text-3xl font-bold mb-4">Hi, I’m the founder.</h3>
-                <p class="text-gray-300">We’re building an assistant that respects your style and saves time. Our vision is personal styling that’s affordable, private, and fun.</p>
+              <label class="block text-white font-semibold mb-2">Occasion</label>
+              <select id="occasion-select" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-3">
+                <option>Casual Day Out</option>
+                <option>Office</option>
+                <option>Party</option>
+                <option>Wedding</option>
+                <option>Gym</option>
+              </select>
             </div>
-        </div>
-    </section>
-
-    <!-- Twinning Feature -->
-    <section id="twinning-feature" class="py-16 bg-gray-800 bg-opacity-30">
-        <div class="container mx-auto px-4">
-            <h2 class="text-3xl sm:text-4xl font-bold text-center mb-12">Twinning — Match Your Partner’s Look</h2>
-            <div class="grid md:grid-cols-2 gap-10 items-start">
-                <div class="space-y-6">
-                    <div>
-                        <label class="block text-white font-semibold mb-2">Twinning Style</label>
-                        <select id="twinning-style" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-3">
-                            <option>Same Outfit</option>
-                            <option>Same Color</option>
-                            <option>Complementary Colors</option>
-                            <option>Contrast Vibes</option>
-                        </select>
-                    </div>
-                    <div class="flex gap-3">
-                        <button class="twinning-btn px-4 py-2 rounded-lg bg-indigo-500 hover:bg-indigo-600 text-white">Classy</button>
-                        <button class="twinning-btn px-4 py-2 rounded-lg bg-gray-700 hover:bg-gray-600 text-white">Casual</button>
-                        <button class="twinning-btn px-4 py-2 rounded-lg bg-gray-700 hover:bg-gray-600 text-white">Fusion</button>
-                    </div>
-                    <button id="find-twinning-btn" data-endpoint="/api/twinning/find" class="cta-btn text-white py-3 px-6 rounded-lg font-bold w-full">
-                        <span id="twinning-button-text">Find Twinning Looks</span>
-                        <span id="twinning-loading-indicator" class="hidden ml-3 inline-flex items-center"><span class="loading-spinner"></span></span>
-                    </button>
-                </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <img id="person1-outfit" src="https://placehold.co/400x600/6366f1/white?text=Your+Look" alt="Your look" class="rounded-xl border border-gray-700">
-                    <img id="person2-outfit" src="https://placehold.co/400x600/f43f5e/white?text=Partner's+Look" alt="Partner's look" class="rounded-xl border border-gray-700">
-                </div>
+            <div>
+              <label class="block text-white font-semibold mb-2">Style</label>
+              <select id="style-select" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-3">
+                <option>Minimal</option>
+                <option>Streetwear</option>
+                <option>Classic</option>
+                <option>Boho</option>
+                <option>Luxury</option>
+              </select>
             </div>
+          </div>
         </div>
-    </section>
-
-    <!-- FAQ -->
-    <section id="faq" class="py-16 bg-gray-800 bg-opacity-30">
-        <div class="container mx-auto px-4">
-            <h2 class="text-3xl sm:text-4xl font-bold text-center mb-12">Frequently Asked Questions</h2>
-            <div class="max-w-3xl mx-auto space-y-4">
-                <div class="card p-6 rounded-xl cursor-pointer">
-                    <h4 class="text-lg font-semibold text-white">How accurate are the AI try-on images?</h4>
-                    <p class="mt-2 text-gray-400 faq-answer">We focus on vibe and silhouette over pixel-perfect realism. You get a strong sense of colors, cuts, and overall look.</p>
-                </div>
-                <div class="card p-6 rounded-xl cursor-pointer">
-                    <h4 class="text-lg font-semibold text-white">Is my data private?</h4>
-                    <p class="mt-2 text-gray-400 faq-answer">Yes. Photos are processed securely and can be deleted anytime. We never sell your data.</p>
-                </div>
-                <div class="card p-6 rounded-xl cursor-pointer">
-                    <h4 class="text-lg font-semibold text-white">Do I need special hardware?</h4>
-                    <p class="mt-2 text-gray-400 faq-answer">No. It works on modern phones and laptops with a camera and a stable connection.</p>
-                </div>
+        <div class="space-y-4 text-left">
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div>
+              <label class="block text-white font-semibold mb-2">Outfit</label>
+              <select id="outfit-select" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-3">
+                <option>Summer Linen Set</option>
+                <option>Tailored Blazer</option>
+                <option>Graphic Tee + Jeans</option>
+                <option>Saree (Contemporary)</option>
+                <option>Kurta + Chinos</option>
+              </select>
             </div>
-        </div>
-    </section>
-
-    <!-- Contact -->
-    <section id="contact" class="py-16">
-        <div class="container mx-auto px-4">
-            <h2 class="text-3xl sm:text-4xl font-bold text-center mb-8">Contact Us</h2>
-            <div class="max-w-xl mx-auto card p-8 rounded-3xl">
-                <form id="contact-form" class="mt-8 space-y-4" method="POST" action="/api/contact" novalidate>
-                    <input id="contact-name" name="name" type="text" placeholder="Your Name" autocomplete="name" aria-label="Your Name" class="w-full px-4 py-3 rounded-lg bg-gray-900 border border-gray-700 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
-                    <input id="contact-email" name="email" type="email" placeholder="Your Email" autocomplete="email" aria-label="Your Email" class="w-full px-4 py-3 rounded-lg bg-gray-900 border border-gray-700 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
-                    <textarea id="contact-message" name="message" placeholder="Your Message" aria-label="Your Message" rows="4" class="w-full px-4 py-3 rounded-lg bg-gray-900 border border-gray-700 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
-                    <div id="contact-status" class="text-sm text-gray-300" aria-live="polite"></div>
-                    <button type="submit" class="w-full cta-btn text-white py-3 rounded-lg font-bold">Send Message</button>
-                </form>
+            <div>
+              <label class="block text-white font-semibold mb-2">Background</label>
+              <select id="background-select" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-3">
+                <option>Studio</option>
+                <option>Street</option>
+                <option>Beach</option>
+                <option>Office</option>
+                <option>Garden</option>
+              </select>
             </div>
+            <div>
+              <label class="block text-white font-semibold mb-2">Pose</label>
+              <select id="pose-select" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-3">
+                <option>Casual Standing</option>
+                <option>Walking</option>
+                <option>Sitting</option>
+                <option>Leaning</option>
+                <option>Turning</option>
+              </select>
+            </div>
+          </div>
         </div>
-    </section>
+        <button id="open-stylist-button" class="px-6 py-3 rounded-lg chip text-white font-semibold w-full">Open Social Stylist</button>
+      </div>
+    </div>
+  </section>
 
-    <!-- Footer -->
-    <footer class="py-10 border-t border-gray-800">
-        <div class="container mx-auto px-4 text-center text-gray-400">
-            <p>© <span id="year"></span> TryOnNow. All rights reserved.</p>
+  <!-- How it works -->
+  <section id="how" class="py-16 bg-gray-800 bg-opacity-30">
+    <div class="container mx-auto px-4">
+      <h2 class="text-3xl sm:text-4xl font-bold text-center mb-12">How it Works</h2>
+      <div class="grid md:grid-cols-3 gap-8">
+        <div class="card p-6 rounded-2xl">
+          <p class="text-xl font-semibold">1. Upload</p>
+          <p class="text-gray-400">Upload a photo and choose climate + occasion.</p>
         </div>
-    </footer>
+        <div class="card p-6 rounded-2xl">
+          <p class="text-xl font-semibold">2. Generate</p>
+          <p class="text-gray-400">Get a styled preview image you can share.</p>
+        </div>
+        <div class="card p-6 rounded-2xl">
+          <p class="text-xl font-semibold">3. Try in 3D</p>
+          <p class="text-gray-400">Test fit & drape on a 3D mannequin and pick size.</p>
+        </div>
+      </div>
+    </div>
+  </section>
 
-    <script>
-        // Header interactions
-        const mobileMenuButton = document.getElementById('open-mobile-menu');
-        const mobileMenu = document.getElementById('mobile-menu');
-        const openStylistButton = document.getElementById('open-stylist-button');
-        const socialStylistModal = document.getElementById('social-stylist-modal');
-        const closeModalButton = document.getElementById('close-modal-button');
-        const generateButton = document.getElementById('generate-button');
-        const generatedImagePreview = document.getElementById('generated-image-preview');
-        const loadingMessage = document.getElementById('loading-message');
+  <!-- Social Stylist Modal -->
+  <div id="social-stylist-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="social-stylist-title">
+    <div class="modal-content">
+      <button id="close-modal-button" class="absolute top-4 right-4 text-white text-3xl font-bold leading-none" aria-label="Close">&times;</button>
+      <h3 id="social-stylist-title" class="text-3xl font-bold text-center mb-6">TryOnNow Social Stylist</h3>
+      <div class="flex flex-col lg:flex-row gap-8">
+        <!-- Inputs & Controls -->
+        <div class="flex-1 space-y-6">
+          <div>
+            <label for="user-image-input" class="block text-white font-semibold mb-2">1. Upload Your Photo</label>
+            <input type="file" id="user-image-input" accept="image/*" class="w-full file:px-4 file:py-2 file:rounded-lg file:border file:border-gray-600 file:bg-gray-800 file:text-white file:cursor-pointer">
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-white font-semibold mb-2">Outfit</label>
+              <!-- FIX: Unique IDs for modal selects -->
+              <select id="modal-outfit-select" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-3">
+                <option>Summer Linen Set</option>
+                <option>Tailored Blazer</option>
+                <option>Graphic Tee + Jeans</option>
+                <option>Saree (Contemporary)</option>
+                <option>Kurta + Chinos</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-white font-semibold mb-2">Background</label>
+              <select id="modal-background-select" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-3">
+                <option>Studio</option>
+                <option>Street</option>
+                <option>Beach</option>
+                <option>Office</option>
+                <option>Garden</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-white font-semibold mb-2">Pose</label>
+              <select id="modal-pose-select" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-3">
+                <option>Casual Standing</option>
+                <option>Walking</option>
+                <option>Sitting</option>
+                <option>Leaning</option>
+                <option>Turning</option>
+              </select>
+            </div>
+          </div>
+          <button id="generate-button" data-endpoint="/api/ai-stylist/suggest" class="cta-btn text-white py-3 px-6 rounded-lg font-bold w-full">
+            Generate & Share Look
+          </button>
+        </div>
+        <!-- Preview & Share -->
+        <div class="flex-1">
+          <h4 class="text-xl font-semibold mb-3">Preview</h4>
+          <div class="relative">
+            <img id="generated-image-preview" src="https://placehold.co/400x600/0d1325/white?text=Preview" alt="Generated Look" class="rounded-xl border border-gray-700 transition-opacity duration-300 opacity-100" />
+            <div id="loading-message" class="hidden absolute inset-0 flex items-center justify-center bg-black/50 rounded-xl">
+              <div class="loading-spinner"></div>
+            </div>
+          </div>
+          <div class="mt-4 flex gap-3">
+            <button id="download-btn" class="px-4 py-2 rounded-lg chip text-white">Download</button>
+            <button id="share-btn" class="px-4 py-2 rounded-lg chip text-white">Share</button>
+          </div>
+          <!-- Optional container to reveal if backend returns extra results -->
+          <div id="twinning-results-container" class="hidden mt-4"></div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-        function hideMobileMenu() {
-            mobileMenu.classList.add('hidden');
+  <!-- 3D FIT -->
+  <section id="fit3d" class="py-16">
+    <div class="container mx-auto px-4">
+      <h2 class="text-3xl sm:text-4xl font-bold text-center mb-12">Experience 3D Fit & Sizing Intelligence</h2>
+      <div class="grid md:grid-cols-2 gap-12 items-center">
+        <div class="card p-8 rounded-3xl">
+          <p class="text-2xl font-semibold text-white mb-4">AI Fit Report</p>
+          <div class="space-y-4">
+            <div class="text-lg text-gray-300"><span class="font-bold text-white">Shoulder Fit:</span> <span class="text-indigo-400">Relaxed</span></div>
+            <div class="text-lg text-gray-300"><span class="font-bold text-white">Chest Fit:</span> <span class="text-indigo-400">True to Size</span></div>
+            <div class="text-lg text-gray-300"><span class="font-bold text-white">Length:</span> <span class="text-indigo-400">Regular</span></div>
+            <div class="text-lg text-gray-300"><span class="font-bold text-white">Size Suggestion:</span> <span class="text-indigo-400">Medium</span></div>
+          </div>
+        </div>
+        <div class="relative">
+          <canvas id="mannequin-canvas" class="w-full h-[400px] rounded-3xl border border-gray-700"></canvas>
+          <div class="absolute inset-0 pointer-events-none rounded-3xl" style="background: radial-gradient( circle at 30% 20%, rgba(99,102,241,0.1), transparent 40%), radial-gradient( circle at 70% 80%, rgba(20,184,166,0.12), transparent 40% )"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Smart Suggestions -->
+  <section id="suggestions" class="py-16 bg-gray-800 bg-opacity-30">
+    <div class="container mx-auto px-4">
+      <h2 class="text-3xl sm:text-4xl font-bold text-center mb-12">Smart Suggestions</h2>
+      <div class="grid md:grid-cols-3 gap-6">
+        <div class="card p-6 rounded-2xl">
+          <p class="font-semibold">Shoes</p>
+          <p class="text-gray-400">Minimal sneakers, loafers, or Kolhapuri sandals based on your selection.</p>
+        </div>
+        <div class="card p-6 rounded-2xl">
+          <p class="font-semibold">Accessories</p>
+          <p class="text-gray-400">Layered necklace, leather belt, or a silk pocket square for sharp finish.</p>
+        </div>
+        <div class="card p-6 rounded-2xl">
+          <p class="font-semibold">Colors</p>
+          <p class="text-gray-400">Palette tuned to your skin tone and hair (cool vs warm undertones).</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Apps -->
+  <section id="apps" class="py-16">
+    <div class="container mx-auto px-4">
+      <h2 class="text-3xl sm:text-4xl font-bold text-center mb-12">Get the Apps</h2>
+      <div class="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto">
+        <a class="card p-5 rounded-2xl flex items-center justify-between" href="#">
+          <div>
+            <p class="font-semibold">iOS</p>
+            <p class="text-gray-400 text-sm">Optimized for iPhone 14+ cameras</p>
+          </div>
+          <img src="https://upload.wikimedia.org/wikipedia/commons/3/3e/Apple_logo_white.svg" alt="Apple" class="w-8 h-8 opacity-80">
+        </a>
+        <a class="card p-5 rounded-2xl flex items-center justify-between" href="#">
+          <div>
+            <p class="font-semibold">Android</p>
+            <p class="text-gray-400 text-sm">Works great on Pixel & Samsung</p>
+          </div>
+          <img src="https://upload.wikimedia.org/wikipedia/commons/3/31/Android_robot_head.svg" alt="Android" class="w-8 h-8 opacity-80">
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Reviews -->
+  <section id="reviews" class="py-16 bg-gray-800 bg-opacity-30">
+    <div class="container mx-auto px-4">
+      <h2 class="text-3xl sm:text-4xl font-bold text-center mb-12">What People Say</h2>
+      <div class="grid md:grid-cols-3 gap-6">
+        <div class="card p-6 rounded-2xl">
+          <p class="text-gray-300">“I finally know what to wear to weddings without spam-texting friends.”</p>
+          <p class="mt-3 text-sm text-gray-400">— Aanya R.</p>
+        </div>
+        <div class="card p-6 rounded-2xl">
+          <p class="text-gray-300">“The 3D mannequin sizing is scary-accurate for jackets.”</p>
+          <p class="mt-3 text-sm text-gray-400">— Kiran M.</p>
+        </div>
+        <div class="card p-6 rounded-2xl">
+          <p class="text-gray-300">“Shared my look on Instagram straight from the modal.”</p>
+          <p class="mt-3 text-sm text-gray-400">— Zoya D.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Founder (fixed: remove image; correct details) -->
+  <section id="founder" class="py-16">
+    <div class="container mx-auto px-4 max-w-3xl">
+      <div class="card p-8 rounded-3xl">
+        <h3 class="text-3xl font-bold mb-4">Founder</h3>
+        <p class="text-lg text-gray-300"><span class="font-semibold text-white">Ravi Kiran Kanapala</span> — MBA postgraduate; enthusiastic in business &amp; style. He created TryOnNow driven by that passion and vision.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Twinning Feature -->
+  <section id="twinning-feature" class="py-16 bg-gray-800 bg-opacity-30">
+    <div class="container mx-auto px-4">
+      <h2 class="text-3xl sm:text-4xl font-bold text-center mb-12">Twinning — Match Your Partner’s Look</h2>
+      <div class="grid md:grid-cols-2 gap-10 items-start">
+        <div class="space-y-6">
+          <div>
+            <label class="block text-white font-semibold mb-2">Twinning Style</label>
+            <select id="twinning-style" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-3">
+              <option>Same Outfit</option>
+              <option>Same Color</option>
+              <option>Complementary Colors</option>
+              <option>Contrast Vibes</option>
+            </select>
+          </div>
+          <div class="flex gap-3">
+            <button class="twinning-btn px-4 py-2 rounded-lg bg-indigo-500 hover:bg-indigo-600 text-white">Classy</button>
+            <button class="twinning-btn px-4 py-2 rounded-lg bg-gray-700 hover:bg-gray-600 text-white">Casual</button>
+            <button class="twinning-btn px-4 py-2 rounded-lg bg-gray-700 hover:bg-gray-600 text-white">Fusion</button>
+          </div>
+          <button id="find-twinning-btn" data-endpoint="/api/twinning/find" class="cta-btn text-white py-3 px-6 rounded-lg font-bold w-full">
+            <span id="twinning-button-text">Find Twinning Looks</span>
+            <span id="twinning-loading-indicator" class="hidden ml-3 inline-flex items-center"><span class="loading-spinner"></span></span>
+          </button>
+        </div>
+        <div class="grid grid-cols-2 gap-4">
+          <img id="person1-outfit" src="https://placehold.co/400x600/6366f1/white?text=Your+Look" alt="Your look" class="rounded-xl border border-gray-700">
+          <img id="person2-outfit" src="https://placehold.co/400x600/f43f5e/white?text=Partner's+Look" alt="Partner's look" class="rounded-xl border border-gray-700">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq" class="py-16 bg-gray-800 bg-opacity-30">
+    <div class="container mx-auto px-4">
+      <h2 class="text-3xl sm:text-4xl font-bold text-center mb-12">Frequently Asked Questions</h2>
+      <div class="max-w-3xl mx-auto space-y-4">
+        <div class="card p-6 rounded-xl cursor-pointer">
+          <h4 class="text-lg font-semibold text-white">How accurate are the AI try-on images?</h4>
+          <p class="mt-2 text-gray-400 faq-answer">We focus on vibe and silhouette over pixel-perfect realism. You get a strong sense of colors, cuts, and overall look.</p>
+        </div>
+        <div class="card p-6 rounded-xl cursor-pointer">
+          <h4 class="text-lg font-semibold text-white">Is my data private?</h4>
+          <p class="mt-2 text-gray-400 faq-answer">Yes. Photos are processed securely and can be deleted anytime. We never sell your data.</p>
+        </div>
+        <div class="card p-6 rounded-xl cursor-pointer">
+          <h4 class="text-lg font-semibold text-white">Do I need special hardware?</h4>
+          <p class="mt-2 text-gray-400 faq-answer">No. It works on modern phones and laptops with a camera and a stable connection.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section id="contact" class="py-16">
+    <div class="container mx-auto px-4">
+      <h2 class="text-3xl sm:text-4xl font-bold text-center mb-8">Contact Us</h2>
+      <div class="max-w-xl mx-auto card p-8 rounded-3xl">
+        <form id="contact-form" class="mt-8 space-y-4" method="POST" action="/api/contact" novalidate>
+          <input id="contact-name" name="name" type="text" placeholder="Your Name" autocomplete="name" aria-label="Your Name" class="w-full px-4 py-3 rounded-lg bg-gray-900 border border-gray-700 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500" required />
+          <input id="contact-email" name="email" type="email" placeholder="Your Email" autocomplete="email" aria-label="Your Email" class="w-full px-4 py-3 rounded-lg bg-gray-900 border border-gray-700 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500" required />
+          <textarea id="contact-message" name="message" placeholder="Your Message" aria-label="Your Message" rows="4" class="w-full px-4 py-3 rounded-lg bg-gray-900 border border-gray-700 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500" required></textarea>
+          <div id="contact-status" class="text-sm text-gray-300" aria-live="polite"></div>
+          <button type="submit" class="w-full cta-btn text-white py-3 rounded-lg font-bold">Send Message</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="py-10 border-t border-gray-800">
+    <div class="container mx-auto px-4 text-center text-gray-400">
+      <p>© <span id="year"></span> TryOnNow. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Header interactions
+    const mobileMenuButton = document.getElementById('open-mobile-menu');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const openStylistButton = document.getElementById('open-stylist-button');
+    const socialStylistModal = document.getElementById('social-stylist-modal');
+    const closeModalButton = document.getElementById('close-modal-button');
+    const generateButton = document.getElementById('generate-button');
+    const generatedImagePreview = document.getElementById('generated-image-preview');
+    const loadingMessage = document.getElementById('loading-message');
+
+    function hideMobileMenu() { mobileMenu.classList.add('hidden'); }
+    mobileMenuButton.addEventListener('click', () => { mobileMenu.classList.toggle('hidden'); });
+
+    // Modal functionality
+    openStylistButton.addEventListener('click', () => { socialStylistModal.classList.add('open'); });
+    closeModalButton.addEventListener('click', () => { socialStylistModal.classList.remove('open'); });
+    window.addEventListener('click', (e) => { if (e.target === socialStylistModal) socialStylistModal.classList.remove('open'); });
+
+    // FAQ accordion logic (animated, accessible)
+    document.querySelectorAll('#faq .card').forEach(item => {
+      const answer = item.querySelector('p');
+      if (!answer) return;
+      answer.classList.remove('hidden');
+      answer.classList.add('faq-answer');
+      answer.style.maxHeight = '0px';
+      answer.style.opacity = '0';
+      item.setAttribute('role', 'button');
+      item.setAttribute('tabindex', '0');
+      item.setAttribute('aria-expanded', 'false');
+      const toggle = () => {
+        const isOpen = answer.classList.toggle('open');
+        item.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        if (isOpen) { answer.style.maxHeight = answer.scrollHeight + 'px'; answer.style.opacity = '1'; }
+        else { answer.style.maxHeight = '0px'; answer.style.opacity = '0'; }
+      };
+      item.addEventListener('click', toggle);
+      item.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); } });
+    });
+
+    // --- Three.js Mannequin (placeholder) ---
+    const canvas = document.getElementById('mannequin-canvas');
+    if (canvas) {
+      const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(45, canvas.clientWidth / 400, 0.1, 100);
+      camera.position.z = 3;
+      const geometry = new THREE.SphereGeometry(1, 16, 12);
+      const material = new THREE.MeshBasicMaterial({ color: 0x6366f1, wireframe: true });
+      const sphere = new THREE.Mesh(geometry, material);
+      scene.add(sphere);
+      const resize = () => { const w = canvas.clientWidth, h = 400; renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix(); };
+      resize();
+      window.addEventListener('resize', resize);
+      const animate = () => { requestAnimationFrame(animate); sphere.rotation.y += 0.008; renderer.render(scene, camera); };
+      animate();
+    }
+
+    // Smooth anchor scroll + close mobile menu on click
+    document.querySelectorAll('a[href^="#"]').forEach(link => {
+      link.addEventListener('click', function(e) {
+        const t = document.querySelector(this.getAttribute('href'));
+        if (!t) return;
+        e.preventDefault();
+        t.scrollIntoView({ behavior: 'smooth' });
+        hideMobileMenu();
+      });
+    });
+
+    // AI generation (scoped to modal selects to avoid duplicate-ID bugs)
+    generateButton.addEventListener('click', async () => {
+      const outfitSelect = document.getElementById('modal-outfit-select');
+      const backgroundSelect = document.getElementById('modal-background-select');
+      const poseSelect = document.getElementById('modal-pose-select');
+      const selectedOutfit = outfitSelect.options[outfitSelect.selectedIndex].text;
+      const selectedBackground = backgroundSelect.options[backgroundSelect.selectedIndex].text;
+      const selectedPose = poseSelect.options[poseSelect.selectedIndex].text;
+
+      loadingMessage.classList.remove('hidden');
+      generatedImagePreview.src = 'https://placehold.co/400x600/0d1325/white?text=Generating...';
+      generatedImagePreview.classList.remove('opacity-100');
+      generatedImagePreview.classList.add('opacity-50');
+
+      const endpoint = generateButton.dataset.endpoint;
+      const fallback = () => {
+        loadingMessage.classList.add('hidden');
+        generatedImagePreview.src = `https://placehold.co/400x600/f43f5e/white?text=${selectedOutfit.replace(/\s/g, '+')}+on+${selectedBackground.replace(/\s/g, '+')}+(${selectedPose.replace(/\s/g, '+')})`;
+        generatedImagePreview.classList.remove('opacity-50');
+        generatedImagePreview.classList.add('opacity-100');
+      };
+
+      if (endpoint) {
+        try {
+          const formData = new FormData();
+          const fileInput = document.getElementById('user-image-input');
+          if (fileInput && fileInput.files[0]) formData.append('photo', fileInput.files[0]);
+          formData.append('outfit', selectedOutfit);
+          formData.append('background', selectedBackground);
+          formData.append('pose', selectedPose);
+
+          const res = await fetch(endpoint, { method: 'POST', body: formData });
+          if (!res.ok) throw new Error('Bad response');
+          const data = await res.json();
+          if (data && data.imageUrl) {
+            loadingMessage.classList.add('hidden');
+            generatedImagePreview.src = data.imageUrl;
+            generatedImagePreview.classList.remove('opacity-50');
+            generatedImagePreview.classList.add('opacity-100');
+          } else { fallback(); }
+        } catch (e) { console.warn('Falling back to demo generation:', e); fallback(); }
+      } else { setTimeout(fallback, 1200); }
+    });
+
+    // Download & Share helpers
+    document.getElementById('download-btn').addEventListener('click', () => {
+      const a = document.createElement('a');
+      a.href = generatedImagePreview.src;
+      a.download = 'tryonnow-look.png';
+      document.body.appendChild(a); a.click(); a.remove();
+    });
+    document.getElementById('share-btn').addEventListener('click', async () => {
+      try {
+        if (navigator.share) {
+          await navigator.share({ title: 'My TryOnNow look', text: 'Check out my AI-styled outfit!', url: generatedImagePreview.src });
+        } else {
+          alert('Copy this link to share:\n' + generatedImagePreview.src);
         }
+      } catch (_) { /* user canceled */ }
+    });
 
-        mobileMenuButton.addEventListener('click', () => {
-            mobileMenu.classList.toggle('hidden');
-        });
+    // --- Twinning Feature Logic ---
+    const twinningButtons = document.querySelectorAll('#twinning-feature .twinning-btn');
+    const findTwinningBtn = document.getElementById('find-twinning-btn');
+    const twinningButtonText = document.getElementById('twinning-button-text');
+    const twinningLoadingIndicator = document.getElementById('twinning-loading-indicator');
+    const twinningResultsContainer = document.getElementById('twinning-results-container');
+    const person1OutfitImg = document.getElementById('person1-outfit');
+    const person2OutfitImg = document.getElementById('person2-outfit');
 
-        // Modal functionality
-        openStylistButton.addEventListener('click', () => {
-            socialStylistModal.classList.add('open');
-        });
+    twinningButtons.forEach(button => {
+      button.addEventListener('click', () => {
+        twinningButtons.forEach(btn => btn.classList.remove('bg-indigo-500', 'hover:bg-indigo-600'));
+        twinningButtons.forEach(btn => btn.classList.add('bg-gray-700', 'hover:bg-gray-600'));
+        button.classList.remove('bg-gray-700', 'hover:bg-gray-600');
+        button.classList.add('bg-indigo-500', 'hover:bg-indigo-600');
+      });
+    });
 
-        closeModalButton.addEventListener('click', () => {
-            socialStylistModal.classList.remove('open');
-        });
+    findTwinningBtn.addEventListener('click', async () => {
+      // Show loading state
+      findTwinningBtn.disabled = true;
+      twinningButtonText.textContent = 'Finding Matches...';
+      twinningLoadingIndicator.classList.remove('hidden');
+      twinningResultsContainer && twinningResultsContainer.classList.add('hidden');
 
-        window.addEventListener('click', (e) => {
-            if (e.target === socialStylistModal) {
-                socialStylistModal.classList.remove('open');
-            }
-        });
+      const twinningStyle = document.getElementById('twinning-style').value;
+      const endpoint = findTwinningBtn.dataset.endpoint;
 
-        // FAQ accordion logic (animated, accessible)
-        document.querySelectorAll('#faq .card').forEach(item => {
-            const answer = item.querySelector('p');
-            if (!answer) return;
-            answer.classList.remove('hidden');
-            answer.classList.add('faq-answer');
-            answer.style.maxHeight = '0px';
-            answer.style.opacity = '0';
-            item.setAttribute('role', 'button');
-            item.setAttribute('tabindex', '0');
-            item.setAttribute('aria-expanded', 'false');
+      const finish = (urls) => {
+        findTwinningBtn.disabled = false;
+        twinningButtonText.textContent = 'Find Twinning Looks';
+        twinningLoadingIndicator.classList.add('hidden');
+        twinningResultsContainer && twinningResultsContainer.classList.remove('hidden');
+        const [url1, url2] = urls;
+        person1OutfitImg.src = url1;
+        person2OutfitImg.src = url2;
+      };
 
-            const toggle = () => {
-                const isOpen = answer.classList.toggle('open');
-                item.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-                if (isOpen) {
-                    answer.style.maxHeight = answer.scrollHeight + 'px';
-                    answer.style.opacity = '1';
-                } else {
-                    answer.style.maxHeight = '0px';
-                    answer.style.opacity = '0';
-                }
-            };
-
-            item.addEventListener('click', toggle);
-            item.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); }
-            });
-        });
-
-        // --- Three.js Mannequin (simple rotating wireframe sphere as placeholder) ---
-        const canvas = document.getElementById('mannequin-canvas');
-        if (canvas) {
-            const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
-            const scene = new THREE.Scene();
-            const camera = new THREE.PerspectiveCamera(45, canvas.clientWidth / 400, 0.1, 100);
-            camera.position.z = 3;
-            const geometry = new THREE.SphereGeometry(1, 16, 12);
-            const material = new THREE.MeshBasicMaterial({ color: 0x6366f1, wireframe: true });
-            const sphere = new THREE.Mesh(geometry, material);
-            scene.add(sphere);
-            const resize = () => {
-                const w = canvas.clientWidth, h = 400;
-                renderer.setSize(w, h, false);
-                camera.aspect = w / h; camera.updateProjectionMatrix();
-            };
-            resize();
-            window.addEventListener('resize', resize);
-            const animate = () => { requestAnimationFrame(animate); sphere.rotation.y += 0.008; renderer.render(scene, camera); };
-            animate();
+      if (endpoint) {
+        try {
+          const res = await fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ style: twinningStyle }) });
+          if (!res.ok) throw new Error('Bad response');
+          const data = await res.json();
+          if (data && Array.isArray(data.imageUrls) && data.imageUrls.length >= 2) {
+            finish([data.imageUrls[0], data.imageUrls[1]]);
+          } else { throw new Error('Malformed response'); }
+        } catch (e) {
+          console.warn('Twinning fallback due to error:', e);
+          let color1 = '6366f1'; let color2 = 'f43f5e';
+          if (twinningStyle === 'Same Outfit' || twinningStyle === 'Same Color') { color2 = color1; }
+          finish([
+            `https://placehold.co/400x600/${color1}/white?text=Your+Look`,
+            `https://placehold.co/400x600/${color2}/white?text=Partner's+Look`
+          ]);
         }
+      } else {
+        setTimeout(() => {
+          let color1 = '6366f1'; let color2 = 'f43f5e';
+          if (twinningStyle === 'Same Outfit' || twinningStyle === 'Same Color') { color2 = color1; }
+          finish([
+            `https://placehold.co/400x600/${color1}/white?text=Your+Look`,
+            `https://placehold.co/400x600/${color2}/white?text=Partner's+Look`
+          ]);
+        }, 2000);
+      }
+    });
 
-        // Smooth anchor scroll + close mobile menu on click
-        document.querySelectorAll('a[href^="#"]').forEach(link => {
-            link.addEventListener('click', function(e) {
-                const t = document.querySelector(this.getAttribute('href'));
-                if (!t) return;
-                e.preventDefault();
-                t.scrollIntoView({ behavior: 'smooth' });
-                hideMobileMenu();
-            });
-        });
+    // Footer year
+    document.getElementById('year').textContent = new Date().getFullYear();
 
-        // AI generation with optional backend endpoint
-        generateButton.addEventListener('click', async () => {
-            const outfitSelect = document.getElementById('outfit-select');
-            const backgroundSelect = document.getElementById('background-select');
-            const poseSelect = document.getElementById('pose-select');
-            const selectedOutfit = outfitSelect.options[outfitSelect.selectedIndex].text;
-            const selectedBackground = backgroundSelect.options[backgroundSelect.selectedIndex].text;
-            const selectedPose = poseSelect.options[poseSelect.selectedIndex].text;
-
-            loadingMessage.classList.remove('hidden');
-            generatedImagePreview.src = 'https://placehold.co/400x600/0d1325/white?text=Generating...';
-            generatedImagePreview.classList.remove('opacity-100');
-            generatedImagePreview.classList.add('opacity-50');
-
-            const endpoint = generateButton.dataset.endpoint;
-
-            const fallback = () => {
-                loadingMessage.classList.add('hidden');
-                generatedImagePreview.src = `https://placehold.co/400x600/f43f5e/white?text=${selectedOutfit.replace(/\s/g, '+')}+on+${selectedBackground.replace(/\s/g, '+')}+(${selectedPose.replace(/\s/g, '+')})`;
-                generatedImagePreview.classList.remove('opacity-50');
-                generatedImagePreview.classList.add('opacity-100');
-            };
-
-            if (endpoint) {
-                try {
-                    const formData = new FormData();
-                    const fileInput = document.getElementById('user-image-input');
-                    if (fileInput && fileInput.files[0]) formData.append('photo', fileInput.files[0]);
-                    formData.append('outfit', selectedOutfit);
-                    formData.append('background', selectedBackground);
-                    formData.append('pose', selectedPose);
-
-                    const res = await fetch(endpoint, { method: 'POST', body: formData });
-                    if (!res.ok) throw new Error('Bad response');
-                    const data = await res.json();
-                    if (data && data.imageUrl) {
-                        loadingMessage.classList.add('hidden');
-                        generatedImagePreview.src = data.imageUrl;
-                        generatedImagePreview.classList.remove('opacity-50');
-                        generatedImagePreview.classList.add('opacity-100');
-                    } else {
-                        fallback();
-                    }
-                } catch (e) {
-                    console.warn('Falling back to demo generation:', e);
-                    fallback();
-                }
-            } else {
-                // No backend connected—use demo
-                setTimeout(fallback, 1200);
-            }
-        });
-
-        // --- Twinning Feature Logic ---
-        const twinningButtons = document.querySelectorAll('#twinning-feature .twinning-btn');
-        const findTwinningBtn = document.getElementById('find-twinning-btn');
-        const twinningButtonText = document.getElementById('twinning-button-text');
-        const twinningLoadingIndicator = document.getElementById('twinning-loading-indicator');
-        const twinningResultsContainer = document.getElementById('twinning-results-container');
-        const person1OutfitImg = document.getElementById('person1-outfit');
-        const person2OutfitImg = document.getElementById('person2-outfit');
-
-        twinningButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                twinningButtons.forEach(btn => btn.classList.remove('bg-indigo-500', 'hover:bg-indigo-600'));
-                twinningButtons.forEach(btn => btn.classList.add('bg-gray-700', 'hover:bg-gray-600'));
-                button.classList.remove('bg-gray-700', 'hover:bg-gray-600');
-                button.classList.add('bg-indigo-500', 'hover:bg-indigo-600');
-            });
-        });
-
-        findTwinningBtn.addEventListener('click', async () => {
-            // Show loading state
-            findTwinningBtn.disabled = true;
-            twinningButtonText.textContent = 'Finding Matches...';
-            twinningLoadingIndicator.classList.remove('hidden');
-            twinningResultsContainer && twinningResultsContainer.classList.add('hidden');
-
-            const twinningStyle = document.getElementById('twinning-style').value;
-            const endpoint = findTwinningBtn.dataset.endpoint;
-
-            const finish = (urls) => {
-                findTwinningBtn.disabled = false;
-                twinningButtonText.textContent = 'Find Twinning Looks';
-                twinningLoadingIndicator.classList.add('hidden');
-                twinningResultsContainer && twinningResultsContainer.classList.remove('hidden');
-                const [url1, url2] = urls;
-                person1OutfitImg.src = url1;
-                person2OutfitImg.src = url2;
-            };
-
-            if (endpoint) {
-                try {
-                    const res = await fetch(endpoint, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ style: twinningStyle })
-                    });
-                    if (!res.ok) throw new Error('Bad response');
-                    const data = await res.json();
-                    if (data && Array.isArray(data.imageUrls) && data.imageUrls.length >= 2) {
-                        finish([data.imageUrls[0], data.imageUrls[1]]);
-                    } else {
-                        throw new Error('Malformed response');
-                    }
-                } catch (e) {
-                    console.warn('Twinning fallback due to error:', e);
-                    // Fallback to placeholder demo
-                    let color1 = '6366f1';
-                    let color2 = 'f43f5e';
-                    if (twinningStyle === 'Same Outfit' || twinningStyle === 'Same Color') { color2 = color1; }
-                    finish([
-                        `https://placehold.co/400x600/${color1}/white?text=Your+Look`,
-                        `https://placehold.co/400x600/${color2}/white?text=Partner's+Look`
-                    ]);
-                }
-            } else {
-                // No backend: demo after delay
-                setTimeout(() => {
-                    let color1 = '6366f1';
-                    let color2 = 'f43f5e';
-                    if (twinningStyle === 'Same Outfit' || twinningStyle === 'Same Color') { color2 = color1; }
-                    finish([
-                        `https://placehold.co/400x600/${color1}/white?text=Your+Look`,
-                        `https://placehold.co/400x600/${color2}/white?text=Partner's+Look`
-                    ]);
-                }, 2000);
-            }
-        });
-
-        // Footer year
-        document.getElementById('year').textContent = new Date().getFullYear();
-
-// Contact form submission (backend-ready)
-const contactForm = document.getElementById('contact-form');
-if (contactForm) {
-    const contactStatus = document.getElementById('contact-status');
-    contactForm.addEventListener('submit', async (e) => {
+    // Contact form submission (backend-ready)
+    const contactForm = document.getElementById('contact-form');
+    if (contactForm) {
+      const contactStatus = document.getElementById('contact-status');
+      contactForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const name = (document.getElementById('contact-name') || {}).value || '';
         const email = (document.getElementById('contact-email') || {}).value || '';
         const message = (document.getElementById('contact-message') || {}).value || '';
         contactStatus.textContent = 'Sending...';
         try {
-            const res = await fetch(contactForm.action, {
-                method: contactForm.method || 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ name, email, message })
-            });
-            if (!res.ok) throw new Error('Bad response');
-            contactStatus.textContent = 'Thanks! We\'ll get back to you shortly.';
-            contactForm.reset();
+          const res = await fetch(contactForm.action, { method: contactForm.method || 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name, email, message }) });
+          if (!res.ok) throw new Error('Bad response');
+          contactStatus.textContent = "Thanks! We'll get back to you shortly.";
+          contactForm.reset();
         } catch (err) {
-            contactStatus.textContent = 'Could not send right now. Please try again or email us.';
+          contactStatus.textContent = 'Could not send right now. Please try again or email us.';
         }
-    });
-}
+      });
+    }
 
-// Ensure all images use native lazy-loading
-document.querySelectorAll('img:not([loading])').forEach(img => img.setAttribute('loading', 'lazy'));        
-    </script>
+    // Ensure all images use native lazy-loading
+    document.querySelectorAll('img:not([loading])').forEach(img => img.setAttribute('loading', 'lazy'));
+  </script>
 </body>
 </html>
