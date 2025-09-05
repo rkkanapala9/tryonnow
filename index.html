@@ -38,11 +38,7 @@
     }
 
     /* Reusable UI */
-    .card {
-      background: var(--card);
-      border: 1px solid var(--line);
-      box-shadow: 0 10px 40px rgba(0,0,0,0.25);
-    }
+    .card { background: var(--card); border: 1px solid var(--line); box-shadow: 0 10px 40px rgba(0,0,0,0.25); }
     .chip { border: 1px solid var(--line); background: rgba(255,255,255,0.03); }
     .cta-btn { background: var(--cta); }
     .cta-btn:hover { filter: brightness(1.05); }
@@ -52,18 +48,29 @@
       background-color: rgba(0, 0, 0, 0.7);
       display: none; justify-content: center; align-items: center; z-index: 1000;
     }
-    .modal-content { background: var(--bg2); padding: 2rem; border-radius: 1.5rem; max-width: 90%; width: 1000px; position: relative; }
+    .modal-content { background: var(--bg2); padding: 2rem; border-radius: 1.5rem; max-width: 95%; width: 1100px; position: relative; }
     .glass { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); backdrop-filter: blur(8px); }
     .gradient-text { background: linear-gradient(90deg, var(--brand1), var(--brand2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
     .loading-spinner { border: 4px solid rgba(0, 0, 0, 0.1); border-left-color: #f43f5e; border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-    /* Alignment & UX */
-    img { max-width: 100%; height: auto; display: block; }
-    .modal[aria-modal="true"] { display: none; }
-    .modal[aria-modal="true"].open { display: flex; }
+    /* FAQ */
     .faq-answer { overflow: hidden; max-height: 0; opacity: 0; transition: max-height 300ms ease, opacity 300ms ease; }
     .faq-answer.open { max-height: 320px; opacity: 1; }
+
+    /* --- NEW: iOS 3D Card tilt --- */
+    .tilt-card {
+      transform-style: preserve-3d; transition: transform 150ms ease, box-shadow 150ms ease;
+      box-shadow: 0 10px 30px rgba(0,0,0,.35); border:1px solid var(--line);
+    }
+    .tilt-card .layer { transform: translateZ(30px); }
+    .tilt-card .chip { transform: translateZ(50px); }
+
+    /* --- NEW: Social Stylist canvas area --- */
+    #composer-stage { background:#0b1226; border:1px dashed rgba(255,255,255,.15); }
+    .handle { position:absolute; width:14px; height:14px; border-radius:50%; background:#f43f5e; border:2px solid #fff; cursor:nwse-resize; }
+
+    /* Mobile */
     @media (max-width: 640px) { .container { padding-left: 1rem; padding-right: 1rem; } }
   </style>
 </head>
@@ -76,9 +83,9 @@
         <a href="#why" class="text-gray-400 hover:text-white transition-colors duration-300">Why</a>
         <a href="#ai-stylist" class="text-gray-400 hover:text-white transition-colors duration-300">AI Stylist</a>
         <a href="#how" class="text-gray-400 hover:text-white transition-colors duration-300">How</a>
-        <a href="#social-stylist" class="text-gray-400 hover:text-white transition-colors duration-300">Social Stylist</a>
+        <a href="#social-stylist" id="nav-social-stylist" class="text-gray-100 font-semibold hover:text-white transition-colors duration-300">Social Stylist</a>
         <a href="#fit3d" class="text-gray-400 hover:text-white transition-colors duration-300">3D Fit</a>
-        <a href="#suggestions" class="text-gray-400 hover:text-white transition-colors duration-300">Suggestions</a>
+        <a href="#likes" class="text-gray-400 hover:text-white transition-colors duration-300">People Love</a>
         <a href="#apps" class="text-gray-400 hover:text-white transition-colors duration-300">Apps</a>
         <a href="#reviews" class="text-gray-400 hover:text-white transition-colors duration-300">Reviews</a>
         <a href="#founder" class="text-gray-400 hover:text-white transition-colors duration-300">Founder</a>
@@ -100,7 +107,7 @@
         <a href="#how" class="block py-2 text-gray-300">How</a>
         <a href="#social-stylist" class="block py-2 text-gray-300">Social Stylist</a>
         <a href="#fit3d" class="block py-2 text-gray-300">3D Fit</a>
-        <a href="#suggestions" class="block py-2 text-gray-300">Suggestions</a>
+        <a href="#likes" class="block py-2 text-gray-300">People Love</a>
         <a href="#apps" class="block py-2 text-gray-300">Apps</a>
         <a href="#reviews" class="block py-2 text-gray-300">Reviews</a>
         <a href="#founder" class="block py-2 text-gray-300">Founder</a>
@@ -111,23 +118,24 @@
     </div>
   </header>
 
-  <!-- Hero -->
-  <section id="home" class="pt-28 pb-16">
-    <div class="container mx-auto px-4 grid md:grid-cols-2 gap-12 items-center">
+  <!-- HERO (UPDATED: no stock image; moving colored balls background) -->
+  <section id="home" class="pt-28 pb-16 relative overflow-hidden">
+    <!-- NEW: balls canvas -->
+    <canvas id="balls-bg" class="absolute inset-0 w-full h-full"></canvas>
+    <div class="absolute -inset-10 bg-gradient-to-tr from-indigo-500/20 to-teal-400/20 blur-3xl"></div>
+    <div class="container mx-auto px-4 grid md:grid-cols-2 gap-12 items-center relative">
       <div>
         <h1 class="text-4xl sm:text-5xl font-extrabold mb-4 leading-tight">
           Dress with <span class="gradient-text">Confidence</span> — Powered by AI
         </h1>
-        <p class="text-gray-300 text-lg mb-8">Upload a photo, pick an occasion, and let TryOnNow suggest the perfect look — then share it with friends or try it in 3D.</p>
+        <p class="text-gray-300 text-lg mb-8">Upload a photo, pick an outfit, generate your look, and share on social — no shopping required.</p>
         <div class="flex flex-wrap gap-3">
           <a href="#ai-stylist" class="px-6 py-3 rounded-lg cta-btn text-white font-semibold">Try AI Stylist</a>
-          <a href="#social-stylist" class="px-6 py-3 rounded-lg chip text-white font-semibold">Open Social Stylist</a>
+          <button id="open-stylist-button" class="px-6 py-3 rounded-lg chip text-white font-semibold">Open Social Stylist</button>
         </div>
       </div>
-      <div class="relative">
-        <div class="absolute -inset-8 rounded-3xl bg-gradient-to-tr from-indigo-500/20 to-teal-400/20 blur-2xl"></div>
-        <img src="https://images.unsplash.com/photo-1520975682039-e3b0dbf6cc0a?q=80&w=1200&auto=format&fit=crop" alt="Model wearing a stylish outfit" class="relative rounded-3xl shadow-xl border border-gray-700">
-      </div>
+      <!-- RIGHT side intentionally empty (no images) -->
+      <div class="hidden md:block"></div>
     </div>
   </section>
 
@@ -138,11 +146,11 @@
       <div class="grid md:grid-cols-3 gap-8">
         <div class="card p-6 rounded-2xl">
           <p class="text-xl font-semibold">Face-to-Fashion Fit</p>
-          <p class="text-gray-400">AI evaluates skin tone, hair, and body geometry to suggest flattering outfits that keep your vibe intact.</p>
+          <p class="text-gray-400">Upload your face and add an outfit image; generate a shareable look instantly.</p>
         </div>
         <div class="card p-6 rounded-2xl">
           <p class="text-xl font-semibold">Instant Share</p>
-          <p class="text-gray-400">Get a shareable image and poll your friends in seconds — right from the Social Stylist.</p>
+          <p class="text-gray-400">Post your look straight to socials or download it. No shopping flow.</p>
         </div>
         <div class="card p-6 rounded-2xl">
           <p class="text-xl font-semibold">3D Fit Preview</p>
@@ -157,7 +165,7 @@
     <div class="container mx-auto px-4 text-center">
       <h2 class="text-3xl sm:text-4xl font-bold mb-6">Personal AI Stylist</h2>
       <p class="text-lg text-gray-400 mb-8 max-w-2xl mx-auto">
-        Not sure what to wear? Get instant outfit suggestions by uploading a photo of yourself, the climate, and the event you're attending.
+        Not sure what to wear? Get suggestions by uploading a photo plus climate & occasion. When ready to share, open Social Stylist.
       </p>
       <div class="max-w-xl mx-auto card p-8 rounded-3xl space-y-6">
         <div class="space-y-4 text-left">
@@ -198,41 +206,7 @@
             </div>
           </div>
         </div>
-        <div class="space-y-4 text-left">
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div>
-              <label class="block text-white font-semibold mb-2">Outfit</label>
-              <select id="outfit-select" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-3">
-                <option>Summer Linen Set</option>
-                <option>Tailored Blazer</option>
-                <option>Graphic Tee + Jeans</option>
-                <option>Saree (Contemporary)</option>
-                <option>Kurta + Chinos</option>
-              </select>
-            </div>
-            <div>
-              <label class="block text-white font-semibold mb-2">Background</label>
-              <select id="background-select" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-3">
-                <option>Studio</option>
-                <option>Street</option>
-                <option>Beach</option>
-                <option>Office</option>
-                <option>Garden</option>
-              </select>
-            </div>
-            <div>
-              <label class="block text-white font-semibold mb-2">Pose</label>
-              <select id="pose-select" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-3">
-                <option>Casual Standing</option>
-                <option>Walking</option>
-                <option>Sitting</option>
-                <option>Leaning</option>
-                <option>Turning</option>
-              </select>
-            </div>
-          </div>
-        </div>
-        <button id="open-stylist-button" class="px-6 py-3 rounded-lg chip text-white font-semibold w-full">Open Social Stylist</button>
+        <button id="open-stylist-button-2" class="px-6 py-3 rounded-lg chip text-white font-semibold w-full">Open Social Stylist</button>
       </div>
     </div>
   </section>
@@ -242,46 +216,32 @@
     <div class="container mx-auto px-4">
       <h2 class="text-3xl sm:text-4xl font-bold text-center mb-12">How it Works</h2>
       <div class="grid md:grid-cols-3 gap-8">
-        <div class="card p-6 rounded-2xl">
-          <p class="text-xl font-semibold">1. Upload</p>
-          <p class="text-gray-400">Upload a photo and choose climate + occasion.</p>
-        </div>
-        <div class="card p-6 rounded-2xl">
-          <p class="text-xl font-semibold">2. Generate</p>
-          <p class="text-gray-400">Get a styled preview image you can share.</p>
-        </div>
-        <div class="card p-6 rounded-2xl">
-          <p class="text-xl font-semibold">3. Try in 3D</p>
-          <p class="text-gray-400">Test fit & drape on a 3D mannequin and pick size.</p>
-        </div>
+        <div class="card p-6 rounded-2xl"><p class="text-xl font-semibold">1. Upload</p><p class="text-gray-400">Upload your face + outfit image.</p></div>
+        <div class="card p-6 rounded-2xl"><p class="text-xl font-semibold">2. Arrange</p><p class="text-gray-400">Drag/resize your face over the outfit. Pick background & pose.</p></div>
+        <div class="card p-6 rounded-2xl"><p class="text-xl font-semibold">3. Share</p><p class="text-gray-400">Generate the final image, download, or post to socials.</p></div>
       </div>
     </div>
   </section>
 
-  <!-- Social Stylist Modal -->
+  <!-- Social Stylist Modal (REWRITTEN) -->
   <div id="social-stylist-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="social-stylist-title">
     <div class="modal-content">
       <button id="close-modal-button" class="absolute top-4 right-4 text-white text-3xl font-bold leading-none" aria-label="Close">&times;</button>
-      <h3 id="social-stylist-title" class="text-3xl font-bold text-center mb-6">TryOnNow Social Stylist</h3>
+      <h3 id="social-stylist-title" class="text-3xl font-bold text-center">Social Stylist — Create & Share Your Look</h3>
+      <p class="text-center text-gray-400 mt-2 mb-6">Upload your <strong>face</strong> and an <strong>outfit</strong> image. Arrange, generate, and share. No shopping.</p>
+
       <div class="flex flex-col lg:flex-row gap-8">
-        <!-- Inputs & Controls -->
-        <div class="flex-1 space-y-6">
+        <!-- Controls -->
+        <div class="flex-1 space-y-5">
           <div>
-            <label for="user-image-input" class="block text-white font-semibold mb-2">1. Upload Your Photo</label>
-            <input type="file" id="user-image-input" accept="image/*" class="w-full file:px-4 file:py-2 file:rounded-lg file:border file:border-gray-600 file:bg-gray-800 file:text-white file:cursor-pointer">
+            <label for="face-input" class="block text-white font-semibold mb-2">1) Upload Face</label>
+            <input type="file" id="face-input" accept="image/*" class="w-full file:px-4 file:py-2 file:rounded-lg file:border file:border-gray-600 file:bg-gray-800 file:text-white file:cursor-pointer">
           </div>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label class="block text-white font-semibold mb-2">Outfit</label>
-              <!-- FIX: Unique IDs for modal selects -->
-              <select id="modal-outfit-select" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-3">
-                <option>Summer Linen Set</option>
-                <option>Tailored Blazer</option>
-                <option>Graphic Tee + Jeans</option>
-                <option>Saree (Contemporary)</option>
-                <option>Kurta + Chinos</option>
-              </select>
-            </div>
+          <div>
+            <label for="outfit-input" class="block text-white font-semibold mb-2">2) Upload Outfit (top/fit)</label>
+            <input type="file" id="outfit-input" accept="image/*" class="w-full file:px-4 file:py-2 file:rounded-lg file:border file:border-gray-600 file:bg-gray-800 file:text-white file:cursor-pointer">
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
               <label class="block text-white font-semibold mb-2">Background</label>
               <select id="modal-background-select" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-3">
@@ -302,28 +262,37 @@
                 <option>Turning</option>
               </select>
             </div>
+            <div>
+              <label class="block text-white font-semibold mb-2">Face Mask</label>
+              <select id="modal-mask-select" class="w-full bg-gray-900 border border-gray-700 rounded-lg p-3">
+                <option>Circle</option>
+                <option>Oval</option>
+                <option>Square</option>
+              </select>
+            </div>
           </div>
-          <button id="generate-button" data-endpoint="/api/ai-stylist/suggest" class="cta-btn text-white py-3 px-6 rounded-lg font-bold w-full">
-            Generate & Share Look
-          </button>
+          <div class="flex gap-3">
+            <button id="generate-button" class="cta-btn text-white py-3 px-6 rounded-lg font-bold w-full">Generate Image</button>
+          </div>
+          <div class="flex gap-3">
+            <button id="download-btn" class="px-4 py-2 rounded-lg chip text-white w-full">Download</button>
+            <button id="share-btn" class="px-4 py-2 rounded-lg chip text-white w-full">Share</button>
+          </div>
+          <p class="text-xs text-gray-500">Tip: drag your face on the canvas; use mouse wheel / pinch to resize.</p>
         </div>
-        <!-- Preview & Share -->
+
+        <!-- Composer / Preview -->
         <div class="flex-1">
           <h4 class="text-xl font-semibold mb-3">Preview</h4>
-          <div class="relative">
-            <img id="generated-image-preview" src="https://placehold.co/400x600/0d1325/white?text=Preview" alt="Generated Look" class="rounded-xl border border-gray-700 transition-opacity duration-300 opacity-100" />
-            <div id="loading-message" class="hidden absolute inset-0 flex items-center justify-center bg-black/50 rounded-xl">
+          <div class="relative rounded-xl overflow-hidden border border-gray-700">
+            <canvas id="composer-stage" width="600" height="800" class="w-full h-[500px]"></canvas>
+            <div id="loading-message" class="hidden absolute inset-0 flex items-center justify-center bg-black/40">
               <div class="loading-spinner"></div>
             </div>
           </div>
-          <div class="mt-4 flex gap-3">
-            <button id="download-btn" class="px-4 py-2 rounded-lg chip text-white">Download</button>
-            <button id="share-btn" class="px-4 py-2 rounded-lg chip text-white">Share</button>
-          </div>
-          <!-- Optional container to reveal if backend returns extra results -->
-          <div id="twinning-results-container" class="hidden mt-4"></div>
         </div>
       </div>
+
     </div>
   </div>
 
@@ -349,24 +318,29 @@
     </div>
   </section>
 
-  <!-- Smart Suggestions -->
-  <section id="suggestions" class="py-16 bg-gray-800 bg-opacity-30">
+  <!-- People Love (Likes & Streak) -->
+  <section id="likes" class="py-16 bg-gray-800 bg-opacity-30">
     <div class="container mx-auto px-4">
-      <h2 class="text-3xl sm:text-4xl font-bold text-center mb-12">Smart Suggestions</h2>
-      <div class="grid md:grid-cols-3 gap-6">
-        <div class="card p-6 rounded-2xl">
-          <p class="font-semibold">Shoes</p>
-          <p class="text-gray-400">Minimal sneakers, loafers, or Kolhapuri sandals based on your selection.</p>
+      <h2 class="text-3xl sm:text-4xl font-bold text-center mb-8">People Love</h2>
+      <div class="max-w-3xl mx-auto grid gap-6 md:grid-cols-3">
+        <div class="card p-6 rounded-2xl text-center">
+          <p class="text-sm text-gray-400 mb-1">Likes Today</p>
+          <p id="likes-today" class="text-4xl font-bold">0</p>
+          <button id="like-btn" class="mt-4 px-4 py-2 rounded-lg cta-btn text-white w-full">❤️ Like this</button>
+          <p class="text-xs text-gray-500 mt-2">(resets at midnight)</p>
         </div>
-        <div class="card p-6 rounded-2xl">
-          <p class="font-semibold">Accessories</p>
-          <p class="text-gray-400">Layered necklace, leather belt, or a silk pocket square for sharp finish.</p>
+        <div class="card p-6 rounded-2xl text-center">
+          <p class="text-sm text-gray-400 mb-1">Current Streak</p>
+          <p id="current-streak" class="text-4xl font-bold">0</p>
+          <p class="text-xs text-gray-500 mt-2">consecutive days with likes</p>
         </div>
-        <div class="card p-6 rounded-2xl">
-          <p class="font-semibold">Colors</p>
-          <p class="text-gray-400">Palette tuned to your skin tone and hair (cool vs warm undertones).</p>
+        <div class="card p-6 rounded-2xl text-center">
+          <p class="text-sm text-gray-400 mb-1">Best Streak</p>
+          <p id="best-streak" class="text-4xl font-bold">0</p>
+          <button id="reset-stats" class="mt-4 px-4 py-2 rounded-lg chip text-white w-full">Reset (debug)</button>
         </div>
       </div>
+      <p class="text-center text-gray-400 mt-6 text-sm">This demo stores your streak locally. Hook it to your backend later for global counts.</p>
     </div>
   </section>
 
@@ -375,19 +349,34 @@
     <div class="container mx-auto px-4">
       <h2 class="text-3xl sm:text-4xl font-bold text-center mb-12">Get the Apps</h2>
       <div class="grid md:grid-cols-2 gap-6 max-w-3xl mx-auto">
-        <a class="card p-5 rounded-2xl flex items-center justify-between" href="#">
-          <div>
-            <p class="font-semibold">iOS</p>
-            <p class="text-gray-400 text-sm">Optimized for iPhone 14+ cameras</p>
+        <!-- iOS card with 3D tilt (no images) -->
+        <a class="card p-0 rounded-2xl block" href="#">
+          <div id="ios-tilt" class="tilt-card rounded-2xl p-6 bg-gray-900">
+            <div class="layer">
+              <div class="flex items-center justify-between mb-3">
+                <div class="text-sm text-gray-400">iOS Preview</div>
+                <div class="chip px-3 py-1 rounded-full text-xs text-white/80">3D UI</div>
+              </div>
+              <div class="bg-gradient-to-br from-indigo-500/30 to-teal-400/30 rounded-2xl p-5 border border-white/10">
+                <div class="text-5xl font-bold mb-2">9:41</div>
+                <div class="text-sm text-gray-300">Monday, June 12</div>
+                <div class="mt-6 grid grid-cols-3 gap-3">
+                  <div class="chip p-3 rounded-xl text-center">Try</div>
+                  <div class="chip p-3 rounded-xl text-center">Share</div>
+                  <div class="chip p-3 rounded-xl text-center">Save</div>
+                </div>
+              </div>
+              <p class="mt-4 text-gray-400 text-sm">Optimized for iPhone — no image assets used.</p>
+            </div>
           </div>
-          <img src="https://upload.wikimedia.org/wikipedia/commons/3/3e/Apple_logo_white.svg" alt="Apple" class="w-8 h-8 opacity-80">
         </a>
+        <!-- Android: keep simple (no logos) -->
         <a class="card p-5 rounded-2xl flex items-center justify-between" href="#">
           <div>
             <p class="font-semibold">Android</p>
             <p class="text-gray-400 text-sm">Works great on Pixel & Samsung</p>
           </div>
-          <img src="https://upload.wikimedia.org/wikipedia/commons/3/31/Android_robot_head.svg" alt="Android" class="w-8 h-8 opacity-80">
+          <div class="chip px-3 py-1 rounded-full">APK</div>
         </a>
       </div>
     </div>
@@ -398,23 +387,14 @@
     <div class="container mx-auto px-4">
       <h2 class="text-3xl sm:text-4xl font-bold text-center mb-12">What People Say</h2>
       <div class="grid md:grid-cols-3 gap-6">
-        <div class="card p-6 rounded-2xl">
-          <p class="text-gray-300">“I finally know what to wear to weddings without spam-texting friends.”</p>
-          <p class="mt-3 text-sm text-gray-400">— Aanya R.</p>
-        </div>
-        <div class="card p-6 rounded-2xl">
-          <p class="text-gray-300">“The 3D mannequin sizing is scary-accurate for jackets.”</p>
-          <p class="mt-3 text-sm text-gray-400">— Kiran M.</p>
-        </div>
-        <div class="card p-6 rounded-2xl">
-          <p class="text-gray-300">“Shared my look on Instagram straight from the modal.”</p>
-          <p class="mt-3 text-sm text-gray-400">— Zoya D.</p>
-        </div>
+        <div class="card p-6 rounded-2xl"><p class="text-gray-300">“I finally know what to wear to weddings without spam-texting friends.”</p><p class="mt-3 text-sm text-gray-400">— Aanya R.</p></div>
+        <div class="card p-6 rounded-2xl"><p class="text-gray-300">“The 3D mannequin sizing is scary-accurate for jackets.”</p><p class="mt-3 text-sm text-gray-400">— Kiran M.</p></div>
+        <div class="card p-6 rounded-2xl"><p class="text-gray-300">“Shared my look on Instagram straight from the modal.”</p><p class="mt-3 text-sm text-gray-400">— Zoya D.</p></div>
       </div>
     </div>
   </section>
 
-  <!-- Founder (fixed: remove image; correct details) -->
+  <!-- Founder -->
   <section id="founder" class="py-16">
     <div class="container mx-auto px-4 max-w-3xl">
       <div class="card p-8 rounded-3xl">
@@ -424,7 +404,7 @@
     </div>
   </section>
 
-  <!-- Twinning Feature -->
+  <!-- Twinning Feature (kept) -->
   <section id="twinning-feature" class="py-16 bg-gray-800 bg-opacity-30">
     <div class="container mx-auto px-4">
       <h2 class="text-3xl sm:text-4xl font-bold text-center mb-12">Twinning — Match Your Partner’s Look</h2>
@@ -444,14 +424,14 @@
             <button class="twinning-btn px-4 py-2 rounded-lg bg-gray-700 hover:bg-gray-600 text-white">Casual</button>
             <button class="twinning-btn px-4 py-2 rounded-lg bg-gray-700 hover:bg-gray-600 text-white">Fusion</button>
           </div>
-          <button id="find-twinning-btn" data-endpoint="/api/twinning/find" class="cta-btn text-white py-3 px-6 rounded-lg font-bold w-full">
+          <button id="find-twinning-btn" data-endpoint="" class="cta-btn text-white py-3 px-6 rounded-lg font-bold w-full">
             <span id="twinning-button-text">Find Twinning Looks</span>
             <span id="twinning-loading-indicator" class="hidden ml-3 inline-flex items-center"><span class="loading-spinner"></span></span>
           </button>
         </div>
         <div class="grid grid-cols-2 gap-4">
-          <img id="person1-outfit" src="https://placehold.co/400x600/6366f1/white?text=Your+Look" alt="Your look" class="rounded-xl border border-gray-700">
-          <img id="person2-outfit" src="https://placehold.co/400x600/f43f5e/white?text=Partner's+Look" alt="Partner's look" class="rounded-xl border border-gray-700">
+          <img id="person1-outfit" src="https://placehold.co/400x600/6366f1/white?text=Your+Look" alt="Your look" class="rounded-xl border border-gray-700" loading="lazy">
+          <img id="person2-outfit" src="https://placehold.co/400x600/f43f5e/white?text=Partner's+Look" alt="Partner's look" class="rounded-xl border border-gray-700" loading="lazy">
         </div>
       </div>
     </div>
@@ -463,12 +443,12 @@
       <h2 class="text-3xl sm:text-4xl font-bold text-center mb-12">Frequently Asked Questions</h2>
       <div class="max-w-3xl mx-auto space-y-4">
         <div class="card p-6 rounded-xl cursor-pointer">
-          <h4 class="text-lg font-semibold text-white">How accurate are the AI try-on images?</h4>
-          <p class="mt-2 text-gray-400 faq-answer">We focus on vibe and silhouette over pixel-perfect realism. You get a strong sense of colors, cuts, and overall look.</p>
+          <h4 class="text-lg font-semibold text-white">How accurate are the try-on images?</h4>
+          <p class="mt-2 text-gray-400 faq-answer">This demo focuses on vibe and positioning. You can plug your AI later for realism.</p>
         </div>
         <div class="card p-6 rounded-xl cursor-pointer">
           <h4 class="text-lg font-semibold text-white">Is my data private?</h4>
-          <p class="mt-2 text-gray-400 faq-answer">Yes. Photos are processed securely and can be deleted anytime. We never sell your data.</p>
+          <p class="mt-2 text-gray-400 faq-answer">Photos stay on your device in this demo; nothing is uploaded unless you connect a backend.</p>
         </div>
         <div class="card p-6 rounded-xl cursor-pointer">
           <h4 class="text-lg font-semibold text-white">Do I need special hardware?</h4>
@@ -505,62 +485,20 @@
     // Header interactions
     const mobileMenuButton = document.getElementById('open-mobile-menu');
     const mobileMenu = document.getElementById('mobile-menu');
-    const openStylistButton = document.getElementById('open-stylist-button');
     const socialStylistModal = document.getElementById('social-stylist-modal');
+    const openStylistButtons = [document.getElementById('open-stylist-button'), document.getElementById('open-stylist-button-2'), document.getElementById('nav-social-stylist')].filter(Boolean);
     const closeModalButton = document.getElementById('close-modal-button');
-    const generateButton = document.getElementById('generate-button');
-    const generatedImagePreview = document.getElementById('generated-image-preview');
-    const loadingMessage = document.getElementById('loading-message');
 
     function hideMobileMenu() { mobileMenu.classList.add('hidden'); }
     mobileMenuButton.addEventListener('click', () => { mobileMenu.classList.toggle('hidden'); });
 
-    // Modal functionality
-    openStylistButton.addEventListener('click', () => { socialStylistModal.classList.add('open'); });
+    // Modal open/close
+    openStylistButtons.forEach(btn => btn.addEventListener('click', (e) => { e.preventDefault(); socialStylistModal.classList.add('open'); }));
     closeModalButton.addEventListener('click', () => { socialStylistModal.classList.remove('open'); });
     window.addEventListener('click', (e) => { if (e.target === socialStylistModal) socialStylistModal.classList.remove('open'); });
 
-    // FAQ accordion logic (animated, accessible)
-    document.querySelectorAll('#faq .card').forEach(item => {
-      const answer = item.querySelector('p');
-      if (!answer) return;
-      answer.classList.remove('hidden');
-      answer.classList.add('faq-answer');
-      answer.style.maxHeight = '0px';
-      answer.style.opacity = '0';
-      item.setAttribute('role', 'button');
-      item.setAttribute('tabindex', '0');
-      item.setAttribute('aria-expanded', 'false');
-      const toggle = () => {
-        const isOpen = answer.classList.toggle('open');
-        item.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
-        if (isOpen) { answer.style.maxHeight = answer.scrollHeight + 'px'; answer.style.opacity = '1'; }
-        else { answer.style.maxHeight = '0px'; answer.style.opacity = '0'; }
-      };
-      item.addEventListener('click', toggle);
-      item.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); } });
-    });
-
-    // --- Three.js Mannequin (placeholder) ---
-    const canvas = document.getElementById('mannequin-canvas');
-    if (canvas) {
-      const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
-      const scene = new THREE.Scene();
-      const camera = new THREE.PerspectiveCamera(45, canvas.clientWidth / 400, 0.1, 100);
-      camera.position.z = 3;
-      const geometry = new THREE.SphereGeometry(1, 16, 12);
-      const material = new THREE.MeshBasicMaterial({ color: 0x6366f1, wireframe: true });
-      const sphere = new THREE.Mesh(geometry, material);
-      scene.add(sphere);
-      const resize = () => { const w = canvas.clientWidth, h = 400; renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix(); };
-      resize();
-      window.addEventListener('resize', resize);
-      const animate = () => { requestAnimationFrame(animate); sphere.rotation.y += 0.008; renderer.render(scene, camera); };
-      animate();
-    }
-
-    // Smooth anchor scroll + close mobile menu on click
-    document.querySelectorAll('a[href^="#"]').forEach(link => {
+    // Smooth anchor scroll + close mobile menu
+    document.querySelectorAll('a[href^=\"#\"]').forEach(link => {
       link.addEventListener('click', function(e) {
         const t = document.querySelector(this.getAttribute('href'));
         if (!t) return;
@@ -570,73 +508,274 @@
       });
     });
 
-    // AI generation (scoped to modal selects to avoid duplicate-ID bugs)
-    generateButton.addEventListener('click', async () => {
-      const outfitSelect = document.getElementById('modal-outfit-select');
-      const backgroundSelect = document.getElementById('modal-background-select');
-      const poseSelect = document.getElementById('modal-pose-select');
-      const selectedOutfit = outfitSelect.options[outfitSelect.selectedIndex].text;
-      const selectedBackground = backgroundSelect.options[backgroundSelect.selectedIndex].text;
-      const selectedPose = poseSelect.options[poseSelect.selectedIndex].text;
+    // --- NEW: Moving colored balls background (lightweight) ---
+    (function ballsBG(){
+      const c = document.getElementById('balls-bg');
+      if(!c) return;
+      const ctx = c.getContext('2d');
+      let w, h, dpr = window.devicePixelRatio || 1;
+      const balls = Array.from({length: 18}).map((_,i)=>({
+        x: Math.random(), y: Math.random(),
+        r: 60 + Math.random()*120,
+        vx: (Math.random()*2-1)*0.08, vy:(Math.random()*2-1)*0.08,
+        hue: (i*20 + Math.random()*40)%360
+      }));
+      function resize(){ w = c.clientWidth; h = c.clientHeight; c.width = w*dpr; c.height = h*dpr; ctx.scale(dpr,dpr); }
+      function step(){
+        ctx.clearRect(0,0,w,h);
+        balls.forEach(b=>{
+          b.x += b.vx/100; b.y += b.vy/100;
+          if(b.x<0||b.x>1) b.vx*=-1;
+          if(b.y<0||b.y>1) b.vy*=-1;
+          const gx = b.x*w, gy = b.y*h;
+          const grad = ctx.createRadialGradient(gx,gy,0,gx,gy,b.r);
+          grad.addColorStop(0, `hsla(${b.hue},100%,60%,0.25)`);
+          grad.addColorStop(1, `hsla(${b.hue},100%,60%,0)`);
+          ctx.fillStyle = grad;
+          ctx.beginPath(); ctx.arc(gx,gy,b.r,0,Math.PI*2); ctx.fill();
+        });
+        requestAnimationFrame(step);
+      }
+      resize(); window.addEventListener('resize', resize); step();
+    })();
 
-      loadingMessage.classList.remove('hidden');
-      generatedImagePreview.src = 'https://placehold.co/400x600/0d1325/white?text=Generating...';
-      generatedImagePreview.classList.remove('opacity-100');
-      generatedImagePreview.classList.add('opacity-50');
+    // --- Three.js Mannequin (placeholder) ---
+    const canvas3d = document.getElementById('mannequin-canvas');
+    if (canvas3d) {
+      const renderer = new THREE.WebGLRenderer({ canvas: canvas3d, antialias: true, alpha: true });
+      const scene = new THREE.Scene();
+      const camera = new THREE.PerspectiveCamera(45, canvas3d.clientWidth / 400, 0.1, 100);
+      camera.position.z = 3;
+      const geometry = new THREE.SphereGeometry(1, 16, 12);
+      const material = new THREE.MeshBasicMaterial({ color: 0x6366f1, wireframe: true });
+      const sphere = new THREE.Mesh(geometry, material);
+      scene.add(sphere);
+      const resize = () => { const w = canvas3d.clientWidth, h = 400; renderer.setSize(w, h, false); camera.aspect = w / h; camera.updateProjectionMatrix(); };
+      resize(); window.addEventListener('resize', resize);
+      const animate = () => { requestAnimationFrame(animate); sphere.rotation.y += 0.008; renderer.render(scene, camera); };
+      animate();
+    }
 
-      const endpoint = generateButton.dataset.endpoint;
-      const fallback = () => {
-        loadingMessage.classList.add('hidden');
-        generatedImagePreview.src = `https://placehold.co/400x600/f43f5e/white?text=${selectedOutfit.replace(/\s/g, '+')}+on+${selectedBackground.replace(/\s/g, '+')}+(${selectedPose.replace(/\s/g, '+')})`;
-        generatedImagePreview.classList.remove('opacity-50');
-        generatedImagePreview.classList.add('opacity-100');
+    // --- FAQ accordion ---
+    document.querySelectorAll('#faq .card').forEach(item => {
+      const answer = item.querySelector('p'); if (!answer) return;
+      answer.classList.add('faq-answer'); answer.style.maxHeight = '0px'; answer.style.opacity = '0';
+      item.setAttribute('role','button'); item.setAttribute('tabindex','0'); item.setAttribute('aria-expanded','false');
+      const toggle = () => {
+        const isOpen = answer.classList.toggle('open');
+        item.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        if (isOpen) { answer.style.maxHeight = answer.scrollHeight + 'px'; answer.style.opacity = '1'; }
+        else { answer.style.maxHeight = '0px'; answer.style.opacity = '0'; }
       };
-
-      if (endpoint) {
-        try {
-          const formData = new FormData();
-          const fileInput = document.getElementById('user-image-input');
-          if (fileInput && fileInput.files[0]) formData.append('photo', fileInput.files[0]);
-          formData.append('outfit', selectedOutfit);
-          formData.append('background', selectedBackground);
-          formData.append('pose', selectedPose);
-
-          const res = await fetch(endpoint, { method: 'POST', body: formData });
-          if (!res.ok) throw new Error('Bad response');
-          const data = await res.json();
-          if (data && data.imageUrl) {
-            loadingMessage.classList.add('hidden');
-            generatedImagePreview.src = data.imageUrl;
-            generatedImagePreview.classList.remove('opacity-50');
-            generatedImagePreview.classList.add('opacity-100');
-          } else { fallback(); }
-        } catch (e) { console.warn('Falling back to demo generation:', e); fallback(); }
-      } else { setTimeout(fallback, 1200); }
+      item.addEventListener('click', toggle);
+      item.addEventListener('keydown', (e)=>{ if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); }});
     });
 
-    // Download & Share helpers
-    document.getElementById('download-btn').addEventListener('click', () => {
-      const a = document.createElement('a');
-      a.href = generatedImagePreview.src;
-      a.download = 'tryonnow-look.png';
-      document.body.appendChild(a); a.click(); a.remove();
-    });
-    document.getElementById('share-btn').addEventListener('click', async () => {
-      try {
-        if (navigator.share) {
-          await navigator.share({ title: 'My TryOnNow look', text: 'Check out my AI-styled outfit!', url: generatedImagePreview.src });
-        } else {
-          alert('Copy this link to share:\n' + generatedImagePreview.src);
+    // --- NEW: iOS 3D tilt card ---
+    (function tilt(){
+      const el = document.getElementById('ios-tilt'); if(!el) return;
+      const bounds = () => el.getBoundingClientRect();
+      el.addEventListener('mousemove', (e)=>{
+        const b = bounds();
+        const cx = (e.clientX - b.left) / b.width - 0.5;
+        const cy = (e.clientY - b.top) / b.height - 0.5;
+        el.style.transform = `perspective(800px) rotateX(${ -cy*10 }deg) rotateY(${ cx*10 }deg)`;
+      });
+      el.addEventListener('mouseleave', ()=>{ el.style.transform = 'perspective(800px) rotateX(0deg) rotateY(0deg)'; });
+    })();
+
+    // --- NEW: People Love (likes & streaks) ---
+    (function likes(){
+      const likeBtn = document.getElementById('like-btn');
+      const likesTodayEl = document.getElementById('likes-today');
+      const curEl = document.getElementById('current-streak');
+      const bestEl = document.getElementById('best-streak');
+      const resetBtn = document.getElementById('reset-stats');
+
+      const KEY = 'tryon_likes';
+      function todayStr(){ const d = new Date(); return d.toISOString().slice(0,10); }
+      function load(){
+        let s = localStorage.getItem(KEY);
+        if(!s) return { date: todayStr(), likes: 0, current: 0, best: 0, lastActionDate: '' };
+        try { return JSON.parse(s); } catch { return { date: todayStr(), likes:0, current:0, best:0, lastActionDate:'' }; }
+      }
+      function save(v){ localStorage.setItem(KEY, JSON.stringify(v)); }
+
+      function refresh(){
+        const s = load();
+        if (s.date !== todayStr()) { s.date = todayStr(); s.likes = 0; save(s); }
+        likesTodayEl.textContent = s.likes||0;
+        curEl.textContent = s.current||0;
+        bestEl.textContent = s.best||0;
+      }
+
+      likeBtn.addEventListener('click', ()=>{
+        const s = load();
+        // day change?
+        if (s.date !== todayStr()) { s.date = todayStr(); s.likes = 0; }
+        s.likes = (s.likes||0) + 1;
+        // streak logic: If lastActionDate is yesterday or today, keep/advance; if gap >1, reset.
+        const last = s.lastActionDate ? new Date(s.lastActionDate) : null;
+        const now = new Date();
+        const y = new Date(now); y.setDate(y.getDate()-1);
+        const sameDay = last && last.toDateString() === now.toDateString();
+        const isYesterday = last && last.toDateString() === y.toDateString();
+        if (!last) { s.current = 1; }
+        else if (sameDay) { /* keep current */ }
+        else if (isYesterday) { s.current = (s.current||0) + 1; }
+        else { s.current = 1; }
+        s.best = Math.max(s.best||0, s.current||0);
+        s.lastActionDate = now.toISOString();
+        save(s); refresh();
+      });
+
+      resetBtn.addEventListener('click', ()=>{ localStorage.removeItem(KEY); refresh(); });
+      refresh();
+    })();
+
+    // --- Social Stylist Composer (on-device) ---
+    (function composer(){
+      const stage = document.getElementById('composer-stage'); if(!stage) return;
+      const ctx = stage.getContext('2d');
+      const w = stage.width, h = stage.height;
+
+      const faceInput = document.getElementById('face-input');
+      const outfitInput = document.getElementById('outfit-input');
+      const bgSel = document.getElementById('modal-background-select');
+      const poseSel = document.getElementById('modal-pose-select');
+      const maskSel = document.getElementById('modal-mask-select');
+      const genBtn = document.getElementById('generate-button');
+      const dlBtn = document.getElementById('download-btn');
+      const shareBtn = document.getElementById('share-btn');
+      const loading = document.getElementById('loading-message');
+
+      let faceImg = null, outfitImg = null;
+      let faceX = w*0.5, faceY = h*0.35, faceScale = 160; // px radius base
+      let dragging = false, lastX=0, lastY=0;
+
+      function loadFile(input, cb){
+        const file = input.files && input.files[0]; if(!file) return;
+        const url = URL.createObjectURL(file);
+        const img = new Image(); img.onload = ()=>{ URL.revokeObjectURL(url); cb(img); }; img.src = url;
+      }
+
+      faceInput.addEventListener('change', ()=> loadFile(faceInput, img => { faceImg = img; draw(); }));
+      outfitInput.addEventListener('change', ()=> loadFile(outfitInput, img => { outfitImg = img; draw(); }));
+      [bgSel, poseSel, maskSel].forEach(el => el.addEventListener('change', draw));
+
+      // Mouse interactions
+      stage.addEventListener('mousedown', (e)=>{ dragging = true; lastX = e.offsetX; lastY = e.offsetY; });
+      stage.addEventListener('mouseup', ()=> dragging = false);
+      stage.addEventListener('mouseleave', ()=> dragging = false);
+      stage.addEventListener('mousemove', (e)=>{ if(!dragging) return; const dx=e.offsetX-lastX, dy=e.offsetY-lastY; faceX+=dx; faceY+=dy; lastX=e.offsetX; lastY=e.offsetY; draw(); });
+      stage.addEventListener('wheel', (e)=>{ e.preventDefault(); const delta = Math.sign(e.deltaY); faceScale = Math.max(40, faceScale - delta*12); draw(); }, { passive:false });
+
+      function bgPaint(){
+        const opt = bgSel.value;
+        const grad = ctx.createLinearGradient(0,0,0,h);
+        switch(opt){
+          case 'Street': grad.addColorStop(0,'#09111f'); grad.addColorStop(1,'#1b2a4a'); break;
+          case 'Beach': grad.addColorStop(0,'#012a4a'); grad.addColorStop(1,'#2a9d8f'); break;
+          case 'Office': grad.addColorStop(0,'#0e0e10'); grad.addColorStop(1,'#2d2f3a'); break;
+          case 'Garden': grad.addColorStop(0,'#0b1f12'); grad.addColorStop(1,'#1f6f3c'); break;
+          default: grad.addColorStop(0,'#0b0f1a'); grad.addColorStop(1,'#111b2e');
         }
-      } catch (_) { /* user canceled */ }
-    });
+        ctx.fillStyle = grad; ctx.fillRect(0,0,w,h);
+        // subtle bokeh
+        for(let i=0;i<12;i++){
+          const r = 20+Math.random()*60, x=Math.random()*w, y=Math.random()*h;
+          const g = ctx.createRadialGradient(x,y,0,x,y,r);
+          g.addColorStop(0,'rgba(255,255,255,0.06)'); g.addColorStop(1,'rgba(255,255,255,0)');
+          ctx.fillStyle=g; ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2); ctx.fill();
+        }
+      }
 
-    // --- Twinning Feature Logic ---
+      function drawMask(image, x, y, size){
+        const shape = maskSel.value;
+        ctx.save();
+        ctx.beginPath();
+        if(shape==='Square'){ ctx.rect(x-size, y-size, size*2, size*2); }
+        else if(shape==='Oval'){
+          ctx.ellipse(x, y, size*0.85, size, 0, 0, Math.PI*2);
+        } else {
+          ctx.arc(x, y, size, 0, Math.PI*2);
+        }
+        ctx.closePath(); ctx.clip();
+        const iw = image.width, ih = image.height;
+        const scale = Math.max((size*2)/iw, (size*2)/ih);
+        const drawW = iw*scale, drawH = ih*scale;
+        ctx.drawImage(image, x - drawW/2, y - drawH/2, drawW, drawH);
+        ctx.restore();
+      }
+
+      function poseOverlay(){
+        ctx.globalAlpha = 0.08;
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 6;
+        const pose = poseSel.value;
+        ctx.beginPath();
+        if(pose==='Walking'){ ctx.moveTo(w*0.55,h*0.2); ctx.lineTo(w*0.52,h*0.7); ctx.moveTo(w*0.45,h*0.4); ctx.lineTo(w*0.6,h*0.85); }
+        else if(pose==='Sitting'){ ctx.rect(w*0.35,h*0.6,w*0.3,h*0.1); ctx.moveTo(w*0.5,h*0.3); ctx.lineTo(w*0.45,h*0.6); }
+        else if(pose==='Leaning'){ ctx.moveTo(w*0.55,h*0.25); ctx.lineTo(w*0.45,h*0.75); }
+        else if(pose==='Turning'){ ctx.arc(w*0.5,h*0.5,120,Math.PI*0.1,Math.PI*1.6); }
+        else { ctx.moveTo(w*0.5,h*0.25); ctx.lineTo(w*0.5,h*0.8); }
+        ctx.stroke();
+        ctx.globalAlpha = 1;
+      }
+
+      function draw(){
+        ctx.clearRect(0,0,w,h);
+        bgPaint();
+        if(outfitImg){
+          // Fit outfit full height with padding
+          const pad = 40;
+          const scale = Math.min((w-2*pad)/outfitImg.width, (h-2*pad)/outfitImg.height);
+          const dw = outfitImg.width*scale, dh = outfitImg.height*scale;
+          ctx.drawImage(outfitImg, (w-dw)/2, (h-dh)/2, dw, dh);
+        }
+        if(faceImg){ drawMask(faceImg, faceX, faceY, faceScale); }
+        poseOverlay();
+        // shadow frame
+        ctx.strokeStyle = 'rgba(255,255,255,0.08)'; ctx.lineWidth=8; ctx.strokeRect(8,8,w-16,h-16);
+      }
+
+      // generate is instant (on device)
+      document.getElementById('generate-button').addEventListener('click', async ()=>{
+        loading.classList.remove('hidden');
+        setTimeout(()=>{ loading.classList.add('hidden'); draw(); }, 400);
+      });
+
+      document.getElementById('download-btn').addEventListener('click', ()=>{
+        const a = document.createElement('a');
+        a.href = stage.toDataURL('image/png');
+        a.download = 'tryonnow-look.png';
+        document.body.appendChild(a); a.click(); a.remove();
+      });
+
+      document.getElementById('share-btn').addEventListener('click', async ()=>{
+        try {
+          if (navigator.canShare && navigator.canShare({ files: [] })) {
+            stage.toBlob(async (blob)=>{
+              const file = new File([blob], 'tryonnow-look.png', { type: 'image/png' });
+              await navigator.share({ title: 'My TryOnNow Look', text: 'Check out my AI-styled outfit!', files: [file] });
+            });
+          } else if (navigator.share) {
+            await navigator.share({ title: 'My TryOnNow Look', text: 'Check out my AI-styled outfit!', url: stage.toDataURL('image/png') });
+          } else {
+            alert('Copy/save the image to share on socials.');
+          }
+        } catch(_) {}
+      });
+
+      // first paint
+      draw();
+    })();
+
+    // --- Twinning Feature Logic (kept, demo) ---
     const twinningButtons = document.querySelectorAll('#twinning-feature .twinning-btn');
     const findTwinningBtn = document.getElementById('find-twinning-btn');
     const twinningButtonText = document.getElementById('twinning-button-text');
     const twinningLoadingIndicator = document.getElementById('twinning-loading-indicator');
-    const twinningResultsContainer = document.getElementById('twinning-results-container');
     const person1OutfitImg = document.getElementById('person1-outfit');
     const person2OutfitImg = document.getElementById('person2-outfit');
 
@@ -650,52 +789,17 @@
     });
 
     findTwinningBtn.addEventListener('click', async () => {
-      // Show loading state
       findTwinningBtn.disabled = true;
       twinningButtonText.textContent = 'Finding Matches...';
       twinningLoadingIndicator.classList.remove('hidden');
-      twinningResultsContainer && twinningResultsContainer.classList.add('hidden');
 
-      const twinningStyle = document.getElementById('twinning-style').value;
-      const endpoint = findTwinningBtn.dataset.endpoint;
-
-      const finish = (urls) => {
+      setTimeout(() => {
         findTwinningBtn.disabled = false;
         twinningButtonText.textContent = 'Find Twinning Looks';
         twinningLoadingIndicator.classList.add('hidden');
-        twinningResultsContainer && twinningResultsContainer.classList.remove('hidden');
-        const [url1, url2] = urls;
-        person1OutfitImg.src = url1;
-        person2OutfitImg.src = url2;
-      };
-
-      if (endpoint) {
-        try {
-          const res = await fetch(endpoint, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ style: twinningStyle }) });
-          if (!res.ok) throw new Error('Bad response');
-          const data = await res.json();
-          if (data && Array.isArray(data.imageUrls) && data.imageUrls.length >= 2) {
-            finish([data.imageUrls[0], data.imageUrls[1]]);
-          } else { throw new Error('Malformed response'); }
-        } catch (e) {
-          console.warn('Twinning fallback due to error:', e);
-          let color1 = '6366f1'; let color2 = 'f43f5e';
-          if (twinningStyle === 'Same Outfit' || twinningStyle === 'Same Color') { color2 = color1; }
-          finish([
-            `https://placehold.co/400x600/${color1}/white?text=Your+Look`,
-            `https://placehold.co/400x600/${color2}/white?text=Partner's+Look`
-          ]);
-        }
-      } else {
-        setTimeout(() => {
-          let color1 = '6366f1'; let color2 = 'f43f5e';
-          if (twinningStyle === 'Same Outfit' || twinningStyle === 'Same Color') { color2 = color1; }
-          finish([
-            `https://placehold.co/400x600/${color1}/white?text=Your+Look`,
-            `https://placehold.co/400x600/${color2}/white?text=Partner's+Look`
-          ]);
-        }, 2000);
-      }
+        person1OutfitImg.src = `https://placehold.co/400x600/6366f1/white?text=Your+Look`;
+        person2OutfitImg.src = `https://placehold.co/400x600/f43f5e/white?text=Partner's+Look`;
+      }, 1500);
     });
 
     // Footer year
