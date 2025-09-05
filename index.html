@@ -19,13 +19,16 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 
+  <!-- Model-Viewer CDN -->
+  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+
   <style>
     :root {
       --bg: #0a0f1c; --text: #f3f4f6; --muted: #9ca3af; --card: #111827; --line: rgba(156,163,175,.18);
       --brand: #6366f1; --brand2: #14b8a6; --cta: #f43f5e; --radius: 18px; --maxw: 1200px; --shadow: 0 18px 60px rgba(0,0,0,.55);
     }
     * {margin:0; padding:0; box-sizing:border-box}
-    html {scroll-behavior:smooth}
+    html {scroll-behavior:smooth; scroll-padding-top:80px;}
     body {font-family:'Inter',sans-serif; background:var(--bg); color:var(--text); line-height:1.65;}
     h1,h2,h3 {font-family:'Poppins',sans-serif; font-weight:700}
     a {color:inherit; text-decoration:none}
@@ -83,6 +86,9 @@
 
     /* Responsive */
     @media (max-width:900px){ .hero {grid-template-columns:1fr} .hero-img {order:-1} }
+
+    /* Model viewer styling */
+    model-viewer {width:100%; height:100%; border-radius:var(--radius); background:rgba(255,255,255,.05);}
   </style>
 </head>
 <body>
@@ -163,7 +169,13 @@
       <small style="color:var(--muted)">* Demo values for illustration.</small>
     </div>
     <div class="card" style="display:grid;place-items:center;min-height:320px">
-      <div id="cube" style="width:220px;height:220px;position:relative;transform-style:preserve-3d;animation:spin 9s linear infinite"></div>
+      <!-- 3D human model -->
+      <model-viewer src="https://modelviewer.dev/shared-assets/models/Astronaut.glb" 
+                    alt="3D Human Body" 
+                    auto-rotate 
+                    camera-controls 
+                    background-color="rgba(255,255,255,0.05)">
+      </model-viewer>
     </div>
   </div>
 </section>
@@ -234,7 +246,7 @@
   const heroImg = document.querySelector('.hero-img');
   if (!prefersReduced && heroImg) {
     window.addEventListener('scroll', ()=>{
-      const y = window.scrollY * 0.15; // gentle parallax
+      const y = window.scrollY * 0.15; 
       heroImg.style.transform = `translateY(${y}px)`;
     }, {passive:true});
   }
@@ -242,7 +254,7 @@
   // ==== Particles (lightweight) ====
   const canvas = document.getElementById('particles');
   const ctx = canvas.getContext('2d');
-  let w, h, dots=[]; const DOTS=80; // small count = lightweight
+  let w, h, dots=[]; const DOTS=80;
   function resize(){ w = canvas.width = canvas.offsetWidth; h = canvas.height = canvas.offsetHeight; }
   window.addEventListener('resize', resize); resize();
   for(let i=0;i<DOTS;i++) dots.push({x:Math.random()*w,y:Math.random()*h,vx:(Math.random()-.5)*.3,vy:(Math.random()-.5)*.3,r:Math.random()*1.8+0.4});
@@ -251,22 +263,6 @@
     requestAnimationFrame(tick);
   }
   if(!prefersReduced) tick();
-
-  // ==== Simple 3D cube placeholder (CSS-less) ====
-  const cube = document.getElementById('cube');
-  if (cube && !prefersReduced) {
-    // create 6 faces
-    const faces = ['front','back','right','left','top','bottom'];
-    faces.forEach((f)=>{
-      const face = document.createElement('div');
-      face.style.position='absolute'; face.style.inset='0';
-      face.style.background='linear-gradient(135deg, rgba(99,102,241,.25), rgba(20,184,166,.25))';
-      face.style.border='1px solid rgba(156,163,175,.25)';
-      cube.appendChild(face);
-    });
-    cube.style.transformStyle='preserve-3d';
-    let angle=0; function spin(){ angle+=0.5; cube.style.transform=`rotateY(${angle}deg) rotateX(${angle*0.5}deg)`; requestAnimationFrame(spin);} spin();
-  }
 </script>
 </body>
 </html>
