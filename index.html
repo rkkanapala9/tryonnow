@@ -1,138 +1,166 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TryOnNow - Virtual AI Try On</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>TryOnNow - Virtual AI Try-On App</title>
   <style>
-    /* Reset */
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
+    /* ------------------ Global Reset ------------------ */
+    * {margin:0;padding:0;box-sizing:border-box;}
     body {
-      font-family: Arial, sans-serif;
+      font-family: "Poppins", Arial, sans-serif;
       line-height: 1.6;
+      color: #333;
+      scroll-behavior: smooth;
     }
+    a {text-decoration:none;color:inherit;}
+    img {max-width:100%;display:block;}
 
+    /* ------------------ Navbar ------------------ */
     header {
-      background: #0d3b66;
-      color: #fff;
-      padding: 1rem 2rem;
-      position: fixed;
-      width: 100%;
-      top: 0;
-      left: 0;
-      z-index: 1000;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      background:#0d3b66;
+      color:#fff;
+      padding:1rem 2rem;
+      position:fixed;
+      top:0;left:0;width:100%;
+      z-index:1000;
+      display:flex;justify-content:space-between;align-items:center;
     }
+    header h1 {font-size:1.5rem;}
+    nav ul {list-style:none;display:flex;}
+    nav li {margin-left:20px;}
+    nav a {color:#fff;font-weight:600;}
 
-    header h1 {
-      font-size: 1.5rem;
-    }
-
-    nav ul {
-      list-style: none;
-      display: flex;
-    }
-
-    nav ul li {
-      margin-left: 20px;
-    }
-
-    nav ul li a {
-      color: #fff;
-      text-decoration: none;
-      font-weight: bold;
-    }
-
-    /* Hero Section */
+    /* ------------------ Hero ------------------ */
     .hero {
-      height: 500px; /* fixed banner height */
-      background: url('hero-background.jpg') no-repeat center top;
-      background-size: cover;
-      margin-top: 70px; /* push down for navbar */
+      height:90vh;
+      background:linear-gradient(rgba(13,59,102,0.7),rgba(13,59,102,0.7)),
+                 url('assets/hero-placeholder.jpg') center/cover no-repeat;
+      display:flex;align-items:center;justify-content:center;
+      text-align:center;color:#fff;padding:0 1rem;
+    }
+    .hero h2 {font-size:2.5rem;margin-bottom:1rem;}
+    .hero p {font-size:1.2rem;margin-bottom:2rem;}
+    .hero .btns a {
+      background:#f25c54;
+      color:#fff;
+      padding:0.8rem 1.5rem;
+      margin:0 0.5rem;
+      border-radius:8px;
+      font-weight:600;
+      transition:0.3s;
+    }
+    .hero .btns a:hover {background:#ff6b63;}
+
+    /* ------------------ Sections ------------------ */
+    section {padding:4rem 2rem;text-align:center;}
+    section h2 {font-size:2rem;margin-bottom:2rem;color:#0d3b66;}
+
+    /* How it Works */
+    .steps {display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:2rem;}
+    .steps div {
+      background:#f4f4f4;padding:2rem;border-radius:12px;
+      transition:transform 0.3s;
+    }
+    .steps div:hover {transform:translateY(-5px);}
+
+    /* Features */
+    .features {display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:2rem;}
+    .features div {
+      background:#fff;border:1px solid #eee;
+      padding:2rem;border-radius:12px;
+      box-shadow:0 2px 6px rgba(0,0,0,0.05);
+      transition:transform 0.3s;
+    }
+    .features div:hover {transform:translateY(-5px);}
+
+    /* Demo */
+    .demo {display:flex;flex-wrap:wrap;justify-content:center;gap:2rem;align-items:center;}
+    .demo img {width:300px;border-radius:12px;box-shadow:0 2px 10px rgba(0,0,0,0.1);}
+
+    /* Testimonials */
+    .testimonials {display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:2rem;}
+    .testimonials div {
+      background:#f9f9f9;padding:2rem;border-radius:12px;
+      font-style:italic;box-shadow:0 2px 6px rgba(0,0,0,0.05);
     }
 
-    /* Sections */
-    section {
-      padding: 4rem 2rem;
-      text-align: center;
+    /* Founder */
+    .founder {max-width:700px;margin:0 auto;text-align:center;}
+    .founder img {
+      width:120px;height:120px;object-fit:cover;border-radius:50%;
+      margin-bottom:1rem;border:3px solid #0d3b66;
     }
 
-    .features, .how-it-works {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 2rem;
-    }
-
-    .features div, .how-it-works div {
-      background: #f4f4f4;
-      padding: 2rem;
-      border-radius: 10px;
-    }
-
+    /* CTA */
     .cta {
-      background: #0d3b66;
-      color: white;
-      padding: 3rem 2rem;
+      background:#0d3b66;color:#fff;padding:3rem 2rem;
     }
-
-    .cta button {
-      background: #f25c54;
-      border: none;
-      padding: 1rem 2rem;
-      border-radius: 5px;
-      font-size: 1.2rem;
-      color: white;
-      cursor: pointer;
+    .cta h2 {color:#fff;}
+    .cta a {
+      display:inline-block;margin-top:1.5rem;
+      background:#f25c54;padding:1rem 2rem;border-radius:8px;
+      color:#fff;font-weight:600;transition:0.3s;
     }
+    .cta a:hover {background:#ff6b63;}
 
+    /* Footer */
     footer {
-      background: #222;
-      color: #fff;
-      text-align: center;
-      padding: 1rem;
+      background:#222;color:#fff;text-align:center;
+      padding:1rem;font-size:0.9rem;
+    }
+
+    /* Responsive */
+    @media(max-width:768px){
+      .hero h2 {font-size:2rem;}
+      nav ul {flex-wrap:wrap;}
     }
   </style>
 </head>
 <body>
 
+  <!-- Navbar -->
   <header>
     <h1>TryOnNow</h1>
     <nav>
       <ul>
         <li><a href="#how">How It Works</a></li>
         <li><a href="#features">Features</a></li>
+        <li><a href="#demo">Demo</a></li>
         <li><a href="#testimonials">Testimonials</a></li>
-        <li><a href="#cta">Try Now</a></li>
+        <li><a href="#founder">Founder</a></li>
         <li><a href="#contact">Contact</a></li>
       </ul>
     </nav>
   </header>
 
-  <!-- Hero Section -->
-  <section class="hero"></section>
+  <!-- Hero -->
+  <section class="hero">
+    <div>
+      <h2>Try Before You Buy — Instantly</h2>
+      <p>The AI-powered virtual try-on app. See yourself in any outfit before making a decision.</p>
+      <div class="btns">
+        <a href="#">Download on Google Play</a>
+        <a href="#">Download on App Store</a>
+      </div>
+    </div>
+  </section>
 
   <!-- How It Works -->
   <section id="how">
     <h2>How It Works</h2>
-    <div class="how-it-works">
+    <div class="steps">
       <div>
-        <h3>Upload Photo</h3>
-        <p>Upload your photo and get ready to try new styles instantly.</p>
+        <h3>1. Upload Photo</h3>
+        <p>Take or upload your photo to get started.</p>
       </div>
       <div>
-        <h3>Try Outfits</h3>
-        <p>Try unlimited outfits with instant results.</p>
+        <h3>2. Select Outfit</h3>
+        <p>Choose from catalog or upload a dress photo.</p>
       </div>
       <div>
-        <h3>Share & Save</h3>
-        <p>Save or share your looks instantly on social media.</p>
+        <h3>3. See Yourself</h3>
+        <p>AI instantly shows you how it looks on you.</p>
       </div>
     </div>
   </section>
@@ -141,47 +169,52 @@
   <section id="features">
     <h2>Features</h2>
     <div class="features">
-      <div>
-        <h3>AI Powered Try-On</h3>
-        <p>Advanced AI for realistic outfit visualization.</p>
-      </div>
-      <div>
-        <h3>Unlimited Trials</h3>
-        <p>Try as many outfits as you like with instant results.</p>
-      </div>
-      <div>
-        <h3>Social Sharing</h3>
-        <p>Share your looks instantly on your favorite platforms.</p>
-      </div>
-      <div>
-        <h3>Mobile Friendly</h3>
-        <p>Works seamlessly on all devices.</p>
-      </div>
+      <div><h3>AI-Powered Try-On</h3><p>See yourself in any outfit instantly.</p></div>
+      <div><h3>Unlimited Outfit Trials</h3><p>Experiment with endless looks.</p></div>
+      <div><h3>Realistic Results</h3><p>Photo-quality previews every time.</p></div>
+      <div><h3>Social Sharing</h3><p>Share your styles with friends instantly.</p></div>
+      <div><h3>Privacy First</h3><p>Your photos are secure & auto-deleted.</p></div>
+      <div><h3>Mobile Friendly</h3><p>Works seamlessly on all devices.</p></div>
+    </div>
+  </section>
+
+  <!-- Demo -->
+  <section id="demo">
+    <h2>Demo Preview</h2>
+    <div class="demo">
+      <img src="assets/before.jpg" alt="Before Try-On">
+      <img src="assets/after.jpg" alt="After Try-On">
     </div>
   </section>
 
   <!-- Testimonials -->
   <section id="testimonials">
     <h2>What Users Say</h2>
-    <div class="features">
-      <div>
-        <p>"This AI try-on is amazing! I love how realistic the outfits look."</p>
-        <h4>- Sarah K</h4>
-      </div>
-      <div>
-        <p>"Finally, a platform where I can try unlimited outfits without wasting time."</p>
-        <h4>- John D</h4>
-      </div>
+    <div class="testimonials">
+      <div>"This app is a game changer! I finally shop with confidence." – Sarah K</div>
+      <div>"Super realistic and fun to use. Saves me so much time." – John D</div>
+    </div>
+  </section>
+
+  <!-- Founder -->
+  <section id="founder">
+    <h2>Meet the Founder</h2>
+    <div class="founder">
+      <img src="assets/founder.jpg" alt="Founder">
+      <p><strong>Your Name</strong><br>Founder & CEO</p>
+      <p>“I created TryOnNow to solve a simple problem: making fashion shopping smarter, faster, and more fun with AI.”</p>
     </div>
   </section>
 
   <!-- Call To Action -->
-  <section id="cta" class="cta">
+  <section id="contact" class="cta">
     <h2>Start Your Virtual Try-On Today!</h2>
-    <button>Try Now</button>
+    <a href="#">Download the App</a>
+    <p style="margin-top:1rem;">For business inquiries: <a href="mailto:info@tryonnow.com" style="color:#fff;text-decoration:underline;">info@tryonnow.com</a></p>
   </section>
 
-  <footer id="contact">
+  <!-- Footer -->
+  <footer>
     <p>&copy; 2025 TryOnNow. All rights reserved.</p>
   </footer>
 
